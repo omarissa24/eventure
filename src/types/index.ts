@@ -28,6 +28,7 @@ export type CreateEventParams = {
     price: string;
     isFree: boolean;
     url: string;
+    participants: string[];
   };
   path: string;
 };
@@ -46,6 +47,7 @@ export type UpdateEventParams = {
     price: string;
     isFree: boolean;
     url: string;
+    participants: string[];
   };
   path: string;
 };
@@ -95,6 +97,11 @@ export type Event = {
     _id: string;
     name: string;
   };
+  participants: Array<{
+    _id: string;
+    firstName: string;
+    lastName: string;
+  }>;
 };
 
 // ====== CATEGORY PARAMS
