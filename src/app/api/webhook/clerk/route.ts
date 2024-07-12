@@ -63,7 +63,7 @@ export async function POST(req: Request) {
       firstName: first_name!,
       lastName: last_name!,
       photo: image_url,
-      role: "customer",
+      role: "customer", // make this dynamic
     };
 
     const newUser = await createUser(user);
