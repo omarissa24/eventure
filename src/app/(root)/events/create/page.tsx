@@ -1,10 +1,16 @@
 import EventForm from "@/components/shared/EventForm";
 import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 
 const CreateEvent = () => {
   const { sessionClaims } = auth();
 
   const userId = sessionClaims?.metadata.userId as string;
+  const role = sessionClaims?.metadata.role as string;
+
+  if (role !== "organizer" && role !== "admin") {
+    redirect("/");
+  }
 
   return (
     <>
