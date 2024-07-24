@@ -55,7 +55,14 @@ export async function POST(req: Request) {
   const eventType = evt.type;
 
   if (eventType === "user.created") {
-    const { id, email_addresses, image_url, first_name, last_name } = evt.data;
+    const {
+      id,
+      email_addresses,
+      image_url,
+      first_name,
+      last_name,
+      unsafe_metadata,
+    } = evt.data;
 
     const user = {
       clerkId: id,
@@ -63,7 +70,7 @@ export async function POST(req: Request) {
       firstName: first_name!,
       lastName: last_name!,
       photo: image_url,
-      role: "customer", // make this dynamic
+      role: unsafe_metadata.role as string,
     };
 
     const newUser = await createUser(user);
