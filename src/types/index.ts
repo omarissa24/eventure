@@ -104,6 +104,71 @@ export type Event = {
   }>;
 };
 
+// ====== TASK PARAMS
+export type CreateTaskParams = {
+  task: {
+    event: string;
+    creator: string;
+    title: string;
+    description: string;
+    status: string;
+    deadline: Date;
+    assignee: string;
+  };
+  path: string;
+};
+
+export type UpdateTaskParams = {
+  task: {
+    _id: string;
+    title: string;
+    description: string;
+    status: string;
+    deadline: Date;
+    assignee: string;
+  };
+  path: string;
+};
+
+export type DeleteTaskParams = {
+  taskId: string;
+  path: string;
+};
+
+export type GetTasksForUserParams = {
+  userId: string;
+  limit?: number;
+  page: number;
+};
+
+export type GetTasksForEventParams = {
+  eventId: string;
+  limit?: number;
+  page: number;
+};
+
+export type Task = {
+  _id: string;
+  event: {
+    _id: string;
+    title: string;
+  };
+  creator: {
+    _id: string;
+    firstName: string;
+    lastName: string;
+  };
+  title: string;
+  description: string;
+  status: string;
+  deadline: Date;
+  assignee: {
+    _id: string;
+    firstName: string;
+    lastName: string;
+  };
+};
+
 // ====== CATEGORY PARAMS
 export type CreateCategoryParams = {
   categoryName: string;

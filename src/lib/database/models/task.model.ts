@@ -6,7 +6,7 @@ export interface ITask extends Document {
   creator: { _id: string; firstName: string; lastName: string };
   title: string;
   description?: string;
-  completed: boolean;
+  status: string;
   deadline: Date;
   assignee?: { _id: string; firstName: string; lastName: string };
 }
@@ -16,9 +16,11 @@ const TaskSchema = new Schema({
   creator: { type: Schema.Types.ObjectId, ref: "User" },
   title: { type: String, required: true },
   description: { type: String },
-  completed: { type: Boolean, default: false },
+  status: { type: String, required: true },
   deadline: { type: Date, required: true },
   assignee: { type: Schema.Types.ObjectId, ref: "User" },
 });
 
 const Task = models.Task || model("Task", TaskSchema);
+
+export default Task;
