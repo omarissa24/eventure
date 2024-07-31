@@ -13,7 +13,7 @@ import {
   UpdateTaskParams,
   DeleteTaskParams,
   GetTasksForUserParams,
-  GetTasksForEventParams,
+  GetTasksForEventForAssignedUserParams,
 } from "@/types";
 
 const populateTask = (query: any) => {
@@ -81,18 +81,12 @@ export async function deleteTask({ taskId, path }: DeleteTaskParams) {
 }
 
 // GET TASKS FOR USER
-export async function getTasksForUser({
-  userId,
-  limit = 10,
-  page,
-}: GetTasksForUserParams) {
+export async function getTasksForUser({ userId }: GetTasksForUserParams) {
   try {
     await connectToDatabase();
 
     const tasks = await populateTask(
-      Task.find({ assignee: userId })
-        .limit(limit)
-        .skip(limit * (page - 1))
+      Task.find({ $or: [{ creator: userId }, { assignee: userId }] })
     );
 
     return JSON.parse(JSON.stringify(tasks));
@@ -104,16 +98,13 @@ export async function getTasksForUser({
 // GET TASKS FOR EVENT
 export async function getTasksForEvent({
   eventId,
-  limit = 10,
-  page,
-}: GetTasksForEventParams) {
+  userId,
+}: GetTasksForEventForAssignedUserParams) {
   try {
     await connectToDatabase();
 
     const tasks = await populateTask(
-      Task.find({ event: eventId })
-        .limit(limit)
-        .skip(limit * (page - 1))
+      Task.find({ event: eventId, assignee: userId })
     );
 
     return JSON.parse(JSON.stringify(tasks));

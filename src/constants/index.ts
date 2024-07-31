@@ -8,6 +8,10 @@ export const organizerHeaderLinks = [
     route: "/events/create",
   },
   {
+    label: "Events",
+    route: "/events",
+  },
+  {
     label: "Tasks",
     route: "/tasks",
   },

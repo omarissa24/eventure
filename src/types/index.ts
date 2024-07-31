@@ -137,14 +137,11 @@ export type DeleteTaskParams = {
 
 export type GetTasksForUserParams = {
   userId: string;
-  limit?: number;
-  page: number;
 };
 
-export type GetTasksForEventParams = {
+export type GetTasksForEventForAssignedUserParams = {
   eventId: string;
-  limit?: number;
-  page: number;
+  userId: string;
 };
 
 export type Task = {
