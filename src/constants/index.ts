@@ -48,3 +48,13 @@ export const eventDefaultValues = {
   isFree: false,
   url: "",
 };
+
+export const taskStatuses = ["Open", "In Progress", "Completed", "Closed"];
+export const taskDefaultValues = {
+  title: "",
+  description: "",
+  status: "Open",
+  deadline: new Date(),
+  assignee: "",
+  event: "",
+};

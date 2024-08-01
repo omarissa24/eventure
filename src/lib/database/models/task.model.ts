@@ -5,10 +5,10 @@ export interface ITask extends Document {
   event: { _id: string; title: string };
   creator: { _id: string; firstName: string; lastName: string };
   title: string;
-  description?: string;
+  description: string;
   status: string;
   deadline: Date;
-  assignee?: { _id: string; firstName: string; lastName: string };
+  assignee: { _id: string; firstName: string; lastName: string };
 }
 
 const TaskSchema = new Schema({

@@ -16,6 +16,7 @@ import {
   GetEventsByUserParams,
   GetRelatedEventsByCategoryParams,
 } from "@/types";
+import { title } from "process";
 
 const getCategoryByName = async (name: string) => {
   return Category.findOne({ name: { $regex: name, $options: "i" } });
@@ -201,6 +202,14 @@ export async function getEventsByUser({
     await connectToDatabase();
 
     const conditions = { organizer: userId };
+
+    if (!page) {
+      const events = await populateEvent(
+        Event.find(conditions).sort({ title: "asc" })
+      );
+      return JSON.parse(JSON.stringify(events));
+    }
+
     const skipAmount = (page - 1) * limit;
 
     const eventsQuery = Event.find(conditions)
