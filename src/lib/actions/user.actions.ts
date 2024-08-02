@@ -49,6 +49,18 @@ export async function updateUser(clerkId: string, user: UpdateUserParams) {
   }
 }
 
+export async function getOrganizers() {
+  try {
+    await connectToDatabase();
+
+    const organizers = await User.find({ role: "organizer" });
+
+    return JSON.parse(JSON.stringify(organizers));
+  } catch (error) {
+    handleError(error);
+  }
+}
+
 export async function deleteUser(clerkId: string) {
   try {
     await connectToDatabase();

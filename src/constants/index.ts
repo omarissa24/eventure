@@ -1,3 +1,5 @@
+import { title } from "process";
+
 export const organizerHeaderLinks = [
   {
     label: "Home",
@@ -49,11 +51,28 @@ export const eventDefaultValues = {
   url: "",
 };
 
-export const taskStatuses = ["Open", "In Progress", "Completed", "Closed"];
+export const taskStatuses = [
+  {
+    _id: "Open",
+    title: "Open",
+  },
+  {
+    _id: "In Progress",
+    title: "In Progress",
+  },
+  {
+    _id: "Completed",
+    title: "Completed",
+  },
+  {
+    _id: "Closed",
+    title: "Closed",
+  },
+];
 export const taskDefaultValues = {
   title: "",
   description: "",
-  status: "Open",
+  status: "",
   deadline: new Date(),
   assignee: "",
   event: "",

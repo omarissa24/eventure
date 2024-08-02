@@ -12,7 +12,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { taskFormSchema } from "@/lib/validator";
 import * as z from "zod";
-import Dropdown from "./Dropdown";
 import { Textarea } from "@/components/ui/textarea";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -22,8 +21,12 @@ import { taskDefaultValues } from "@/constants";
 import { createTask, updateTask } from "@/lib/actions/task.actions";
 import { ITask } from "@/lib/database/models/task.model";
 import { getEventsByUser } from "@/lib/actions/event.actions";
+import Image from "next/image";
 
 import { useEffect, useState } from "react";
+import { taskStatuses } from "@/constants";
+import ItemsDropdown from "./ItemsDropdown";
+import { getOrganizers } from "@/lib/actions/user.actions";
 
 type TaskFormProps = {
   userId: string;
@@ -45,6 +48,7 @@ const TaskForm = ({ userId, type, task, taskId }: TaskFormProps) => {
   const router = useRouter();
 
   const [events, setEvents] = useState([]);
+  const [assignees, setAssignees] = useState([]);
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -56,7 +60,17 @@ const TaskForm = ({ userId, type, task, taskId }: TaskFormProps) => {
       }
     };
 
+    const fetchOrganizers = async () => {
+      try {
+        const assignees = await getOrganizers();
+        setAssignees(assignees);
+      } catch (error) {
+        console.error("Failed to fetch organizers:", error);
+      }
+    };
+
     fetchEvents();
+    fetchOrganizers();
   }, [userId]);
 
   const form = useForm<z.infer<typeof taskFormSchema>>({
@@ -95,7 +109,143 @@ const TaskForm = ({ userId, type, task, taskId }: TaskFormProps) => {
     }
   }
 
-  return <div>Hello from TaskForm</div>;
+  return (
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className='flex flex-col gap-5'
+      >
+        <div className='flex flex-col gap-5'>
+          <FormField
+            name='title'
+            control={form.control}
+            render={({ field }) => (
+              <FormItem className='w-full'>
+                <FormControl>
+                  <Input
+                    placeholder='Task Title'
+                    {...field}
+                    className='input-field'
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name='description'
+            render={({ field }) => (
+              <FormItem className='w-full'>
+                <FormControl className='h-72'>
+                  <Textarea
+                    placeholder='Description'
+                    {...field}
+                    className='textarea rounded-2xl'
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className='flex flex-col gap-5'>
+          <FormField
+            control={form.control}
+            name='status'
+            render={({ field }) => (
+              <FormItem className='w-full'>
+                <FormControl>
+                  <ItemsDropdown
+                    onChangeHandler={field.onChange}
+                    value={field.value}
+                    items={taskStatuses}
+                    placeholder='Status'
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name='event'
+            render={({ field }) => (
+              <FormItem className='w-full'>
+                <FormControl>
+                  <ItemsDropdown
+                    onChangeHandler={field.onChange}
+                    value={field.value}
+                    items={events}
+                    placeholder='Related Event'
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className='flex flex-col gap-5'>
+          <FormField
+            control={form.control}
+            name='deadline'
+            render={({ field }) => (
+              <FormItem className='w-full'>
+                <FormControl>
+                  <div className='flex-center h-[54px] w-full overflow-hidden rounded-full bg-grey-50 px-4 py-2'>
+                    <Image
+                      src='/assets/icons/calendar.svg'
+                      alt='calendar'
+                      width={24}
+                      height={24}
+                      className='filter-grey'
+                    />
+                    <p className='ml-3 whitespace-nowrap text-grey-600'>
+                      Deadline:
+                    </p>
+                    <DatePicker
+                      selected={field.value}
+                      onChange={(date: Date | null) => field.onChange(date)}
+                      dateFormat='MM/dd/yyyy'
+                      wrapperClassName='datePicker'
+                    />
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name='assignee'
+            render={({ field }) => (
+              <FormItem className='w-full'>
+                <FormControl>
+                  <ItemsDropdown
+                    onChangeHandler={field.onChange}
+                    value={field.value}
+                    items={assignees}
+                    placeholder='Assignee'
+                    isUsersDropdown
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        <Button
+          type='submit'
+          size='lg'
+          disabled={form.formState.isSubmitting}
+          className='button col-span-2 w-full'
+        >
+          {form.formState.isSubmitting ? "Submitting..." : `${type} Task`}
+        </Button>
+      </form>
+    </Form>
+  );
 };
 
 export default TaskForm;
