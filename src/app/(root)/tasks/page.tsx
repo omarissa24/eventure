@@ -1,7 +1,7 @@
 import { getTasksForUser } from "@/lib/actions/task.actions";
 import { auth } from "@clerk/nextjs/server";
 import { Task } from "@/types";
-import TaskForm from "@/components/shared/TaskForm";
+import TaskFormDialog from "@/components/shared/TaskFormDialog";
 
 const Tasks = async () => {
   const { sessionClaims } = auth();
@@ -11,13 +11,14 @@ const Tasks = async () => {
 
   return (
     <div>
-      <h1>Tasks</h1>
-      <TaskForm userId={userId} type='Create' />
-      <ul>
+      <div className='flex justify-end mr-8 mt-4'>
+        <TaskFormDialog userId={userId} type='Create' />
+      </div>
+      {/* <ul>
         {tasks.map((task: Task) => (
           <li key={task._id}>{task.title}</li>
         ))}
-      </ul>
+      </ul> */}
     </div>
   );
 };

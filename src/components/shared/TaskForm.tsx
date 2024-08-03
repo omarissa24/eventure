@@ -1,5 +1,3 @@
-"use client";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Button } from "../ui/button";
 import {
@@ -15,27 +13,33 @@ import * as z from "zod";
 import { Textarea } from "@/components/ui/textarea";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { useRouter } from "next/navigation";
-import { taskDefaultValues } from "@/constants";
-
-import { createTask, updateTask } from "@/lib/actions/task.actions";
-import { ITask } from "@/lib/database/models/task.model";
-import { getEventsByUser } from "@/lib/actions/event.actions";
 import Image from "next/image";
-
 import { useEffect, useState } from "react";
 import { taskStatuses } from "@/constants";
 import ItemsDropdown from "./ItemsDropdown";
+import { getEventsByUser } from "@/lib/actions/event.actions";
 import { getOrganizers } from "@/lib/actions/user.actions";
+import { ITask } from "@/lib/database/models/task.model";
+import { taskDefaultValues } from "@/constants";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 type TaskFormProps = {
   userId: string;
   type: "Create" | "Update";
   task?: ITask;
   taskId?: string;
+  onSubmit: (values: z.infer<typeof taskFormSchema>) => void;
+  formState: any;
 };
 
-const TaskForm = ({ userId, type, task, taskId }: TaskFormProps) => {
+const TaskForm = ({
+  userId,
+  type,
+  task,
+  taskId,
+  onSubmit,
+  formState,
+}: TaskFormProps) => {
   const initialValues =
     task && type === "Update"
       ? {
@@ -45,7 +49,6 @@ const TaskForm = ({ userId, type, task, taskId }: TaskFormProps) => {
           creator: userId,
         }
       : taskDefaultValues;
-  const router = useRouter();
 
   const [events, setEvents] = useState([]);
   const [assignees, setAssignees] = useState([]);
@@ -78,42 +81,12 @@ const TaskForm = ({ userId, type, task, taskId }: TaskFormProps) => {
     defaultValues: initialValues,
   });
 
-  async function onSubmit(values: z.infer<typeof taskFormSchema>) {
-    if (type === "Create") {
-      try {
-        const newTask = await createTask({
-          task: { ...values, creator: userId },
-          path: `/tasks`,
-        });
-
-        if (newTask) {
-          form.reset();
-          router.push("/tasks");
-        }
-      } catch (error) {
-        console.error("Failed to create task:", error);
-      }
-    } else if (type === "Update") {
-      try {
-        const updatedTask = await updateTask({
-          task: { ...values, _id: taskId! },
-          path: "/tasks",
-        });
-
-        if (updatedTask) {
-          router.push("/tasks");
-        }
-      } catch (error) {
-        console.error("Failed to update task:", error);
-      }
-    }
-  }
-
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
         className='flex flex-col gap-5'
+        id='task-form'
       >
         <div className='flex flex-col gap-5'>
           <FormField
@@ -137,7 +110,7 @@ const TaskForm = ({ userId, type, task, taskId }: TaskFormProps) => {
             name='description'
             render={({ field }) => (
               <FormItem className='w-full'>
-                <FormControl className='h-72'>
+                <FormControl>
                   <Textarea
                     placeholder='Description'
                     {...field}
@@ -234,15 +207,6 @@ const TaskForm = ({ userId, type, task, taskId }: TaskFormProps) => {
             )}
           />
         </div>
-
-        <Button
-          type='submit'
-          size='lg'
-          disabled={form.formState.isSubmitting}
-          className='button col-span-2 w-full'
-        >
-          {form.formState.isSubmitting ? "Submitting..." : `${type} Task`}
-        </Button>
       </form>
     </Form>
   );
