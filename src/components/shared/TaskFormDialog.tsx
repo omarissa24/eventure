@@ -84,7 +84,7 @@ const TaskFormDialog = ({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant='outline'>
+        <Button variant='default'>
           {type === "Create" ? "Create Task" : "Edit Task"}
         </Button>
       </DialogTrigger>
