@@ -3,6 +3,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 
 import { Task } from "@/types";
+import { ActionsDropdown } from "./ActionsDropdown";
 
 export const taskColumns: ColumnDef<Task>[] = [
   {
@@ -48,5 +49,13 @@ export const taskColumns: ColumnDef<Task>[] = [
   {
     accessorKey: "actions",
     header: "Actions",
+    cell: ({ row }) => {
+      return (
+        <ActionsDropdown
+          task={row.original}
+          userId={row.original.creator._id}
+        />
+      );
+    },
   },
 ];
