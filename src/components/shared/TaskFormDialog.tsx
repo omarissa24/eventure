@@ -26,9 +26,9 @@ type TaskFormDialogProps = {
   type: "Create" | "Update";
   task?: ITask;
   taskId?: string;
-  isOpen: boolean;
+  isOpen?: boolean;
   isInTable?: boolean;
-  onClose: () => void;
+  onClose?: () => void;
 };
 
 const TaskFormDialog = ({
@@ -67,7 +67,9 @@ const TaskFormDialog = ({
         if (newTask) {
           form.reset();
           router.push("/tasks");
-          onClose();
+          if (onClose) {
+            onClose();
+          }
         }
       } catch (error) {
         console.error("Failed to create task:", error);
@@ -83,7 +85,9 @@ const TaskFormDialog = ({
 
         if (updatedTask) {
           router.push("/tasks");
-          onClose();
+          if (onClose) {
+            onClose();
+          }
         }
       } catch (error) {
         console.error("Failed to update task:", error);
