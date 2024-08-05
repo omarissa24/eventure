@@ -48,7 +48,7 @@ export const taskColumns: ColumnDef<Task>[] = [
   },
   {
     accessorKey: "actions",
-    header: "Actions",
+    header: "",
     cell: ({ row }) => {
       return (
         <ActionsDropdown

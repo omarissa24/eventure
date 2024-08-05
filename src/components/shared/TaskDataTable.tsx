@@ -5,6 +5,7 @@ import {
   flexRender,
   getCoreRowModel,
   useReactTable,
+  getPaginationRowModel,
 } from "@tanstack/react-table";
 
 import {
@@ -17,6 +18,7 @@ import {
 } from "@/components/ui/table";
 
 import { Task } from "@/types";
+import { Button } from "../ui/button";
 
 interface TaskDataTableProps {
   data: Task[];
@@ -28,6 +30,7 @@ export function TaskDataTable({ columns, data }: TaskDataTableProps) {
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
   });
 
   return (
@@ -74,6 +77,24 @@ export function TaskDataTable({ columns, data }: TaskDataTableProps) {
           )}
         </TableBody>
       </Table>
+      <div className='flex items-center justify-center space-x-2 py-4'>
+        <Button
+          variant='outline'
+          size='sm'
+          onClick={() => table.previousPage()}
+          disabled={!table.getCanPreviousPage()}
+        >
+          Previous
+        </Button>
+        <Button
+          variant='outline'
+          size='sm'
+          onClick={() => table.nextPage()}
+          disabled={!table.getCanNextPage()}
+        >
+          Next
+        </Button>
+      </div>
     </div>
   );
 }

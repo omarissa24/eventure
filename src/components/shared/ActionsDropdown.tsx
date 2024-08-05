@@ -14,6 +14,7 @@ import TaskFormDialog from "./TaskFormDialog";
 import { Task } from "@/types";
 import { ITask } from "@/lib/database/models/task.model";
 import { DeleteTaskConfirmation } from "./DeleteTaskConfirmation";
+import { deleteTask } from "@/lib/actions/task.actions";
 
 interface ActionsDropdownProps {
   task: Task;
@@ -30,13 +31,14 @@ export const ActionsDropdown = ({ task, userId }: ActionsDropdownProps) => {
   };
 
   const handleDeleteClick = () => {
-    DeleteTaskConfirmation({ taskId: task._id });
+    // DeleteTaskConfirmation({ taskId: task._id });
+    deleteTask({ taskId: task._id, path: `/tasks` });
   };
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant='outline'>
+        <Button variant='ghost'>
           <MoreHorizontal />
         </Button>
       </DropdownMenuTrigger>
