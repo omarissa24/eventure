@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import TaskFormDialog from "./TaskFormDialog";
-import { deleteTask } from "@/lib/actions/task.actions";
 import { Task } from "@/types";
 import { ITask } from "@/lib/database/models/task.model";
 import { DeleteTaskConfirmation } from "./DeleteTaskConfirmation";
@@ -21,30 +20,32 @@ interface ActionsDropdownProps {
   userId: string;
 }
 
-export function ActionsDropdown({ task, userId }: ActionsDropdownProps) {
+export const ActionsDropdown = ({ task, userId }: ActionsDropdownProps) => {
+  const handleEditClick = () => {
+    TaskFormDialog({
+      userId,
+      type: "Update",
+      task: task as ITask,
+    });
+  };
+
+  const handleDeleteClick = () => {
+    DeleteTaskConfirmation({ taskId: task._id });
+  };
+
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
+      <DropdownMenuTrigger asChild>
         <Button variant='outline'>
           <MoreHorizontal />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-        <DropdownMenuItem
-          onClick={() => {
-            TaskFormDialog({
-              userId,
-              type: "Update",
-              task: task as ITask,
-            });
-          }}
-        >
-          Edit
-        </DropdownMenuItem>
+        <DropdownMenuItem onClick={handleEditClick}>Edit</DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DeleteTaskConfirmation taskId={task._id} />
+        <DropdownMenuItem onClick={handleDeleteClick}>Delete</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
-}
+};

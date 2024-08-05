@@ -11,7 +11,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-// import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import TaskForm from "./TaskForm";
@@ -43,7 +43,7 @@ const TaskFormDialog = ({
           creator: userId,
         }
       : taskDefaultValues;
-  // const router = useRouter();
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof taskFormSchema>>({
     resolver: zodResolver(taskFormSchema),
@@ -60,7 +60,7 @@ const TaskFormDialog = ({
 
         if (newTask) {
           form.reset();
-          // router.push("/tasks");
+          router.push("/tasks");
         }
       } catch (error) {
         console.error("Failed to create task:", error);
@@ -73,7 +73,7 @@ const TaskFormDialog = ({
         });
 
         if (updatedTask) {
-          // router.push("/tasks");
+          router.push("/tasks");
         }
       } catch (error) {
         console.error("Failed to update task:", error);
