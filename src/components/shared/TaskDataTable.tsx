@@ -2,10 +2,12 @@
 
 import {
   ColumnDef,
+  SortingState,
   flexRender,
   getCoreRowModel,
   useReactTable,
   getPaginationRowModel,
+  getSortedRowModel,
 } from "@tanstack/react-table";
 
 import {
@@ -19,6 +21,7 @@ import {
 
 import { Task } from "@/types";
 import { Button } from "../ui/button";
+import React from "react";
 
 interface TaskDataTableProps {
   data: Task[];
@@ -26,13 +29,19 @@ interface TaskDataTableProps {
 }
 
 export function TaskDataTable({ columns, data }: TaskDataTableProps) {
+  const [sorting, setSorting] = React.useState<SortingState>([]);
+
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    onSortingChange: setSorting,
+    getSortedRowModel: getSortedRowModel(),
+    state: {
+      sorting,
+    },
   });
-
   return (
     <div className='rounded-md border'>
       <Table>

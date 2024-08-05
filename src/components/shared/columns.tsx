@@ -4,6 +4,8 @@ import { ColumnDef } from "@tanstack/react-table";
 
 import { Task } from "@/types";
 import { ActionsDropdown } from "./ActionsDropdown";
+import { Button } from "../ui/button";
+import { ArrowUpDown } from "lucide-react";
 
 export const taskColumns: ColumnDef<Task>[] = [
   {
@@ -13,14 +15,37 @@ export const taskColumns: ColumnDef<Task>[] = [
   {
     accessorKey: "description",
     header: "Description",
+    cell: ({ row }) => {
+      return <div className='w-48 truncate'>{row.original.description}</div>;
+    },
   },
   {
     accessorKey: "status",
-    header: "Status",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant='ghost'
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Status
+          <ArrowUpDown className='ml-2 h-4 w-4' />
+        </Button>
+      );
+    },
   },
   {
     accessorKey: "deadline",
-    header: "Deadline",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant='ghost'
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Deadline
+          <ArrowUpDown className='ml-2 h-4 w-4' />
+        </Button>
+      );
+    },
     cell: ({ row }) => {
       return new Date(row.original.deadline).toLocaleDateString();
     },
