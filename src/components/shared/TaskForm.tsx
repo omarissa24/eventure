@@ -47,6 +47,7 @@ const TaskForm = ({
           assignee: task.assignee._id,
           event: task.event._id,
           creator: userId,
+          deadline: new Date(task.deadline),
         }
       : taskDefaultValues;
 

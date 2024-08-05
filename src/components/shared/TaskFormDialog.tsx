@@ -1,5 +1,5 @@
 "use client";
-
+import React from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -26,6 +26,9 @@ type TaskFormDialogProps = {
   type: "Create" | "Update";
   task?: ITask;
   taskId?: string;
+  isOpen: boolean;
+  isInTable?: boolean;
+  onClose: () => void;
 };
 
 const TaskFormDialog = ({
@@ -33,6 +36,9 @@ const TaskFormDialog = ({
   type,
   task,
   taskId,
+  isOpen,
+  isInTable,
+  onClose,
 }: TaskFormDialogProps) => {
   const initialValues =
     task && type === "Update"
@@ -61,6 +67,7 @@ const TaskFormDialog = ({
         if (newTask) {
           form.reset();
           router.push("/tasks");
+          onClose();
         }
       } catch (error) {
         console.error("Failed to create task:", error);
@@ -72,8 +79,11 @@ const TaskFormDialog = ({
           path: "/tasks",
         });
 
+        console.log(updatedTask);
+
         if (updatedTask) {
           router.push("/tasks");
+          onClose();
         }
       } catch (error) {
         console.error("Failed to update task:", error);
@@ -82,12 +92,14 @@ const TaskFormDialog = ({
   };
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant='default'>
-          {type === "Create" ? "Create Task" : "Edit Task"}
-        </Button>
-      </DialogTrigger>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      {!isInTable && (
+        <DialogTrigger asChild>
+          <Button variant='default'>
+            {type === "Create" ? "Create Task" : "Edit Task"}
+          </Button>
+        </DialogTrigger>
+      )}
       <DialogContent className='sm:max-w-[425px] bg-white'>
         <DialogHeader>
           <DialogTitle>
