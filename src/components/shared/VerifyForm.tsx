@@ -1,4 +1,4 @@
-import React, { useState, FormEvent } from "react";
+import React, { useEffect, useRef, FormEvent } from "react";
 import {
   InputOTP,
   InputOTPGroup,
@@ -21,6 +21,14 @@ const VerifyForm = ({
   isSubmitting,
   setIsSubmitting,
 }: VerifyFormProps) => {
+  const firstSlotRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (code === "") {
+      firstSlotRef.current?.focus();
+    }
+  }, [code]);
+
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (code.length === 6) {
@@ -32,6 +40,13 @@ const VerifyForm = ({
   const handleChange = (value: string) => {
     setCode(value);
     if (value.length === 6) {
+      const syntheticEvent = new Event("submit", {
+        bubbles: true,
+        cancelable: true,
+      }) as unknown as FormEvent;
+      syntheticEvent.preventDefault();
+      setIsSubmitting(true);
+      handleVerify(syntheticEvent);
     }
   };
 
@@ -48,6 +63,7 @@ const VerifyForm = ({
               value={code}
               onChange={handleChange}
               className='flex justify-center space-x-2 mb-4'
+              ref={firstSlotRef}
             >
               <InputOTPGroup>
                 {Array.from({ length: 3 }).map((_, index) => (
