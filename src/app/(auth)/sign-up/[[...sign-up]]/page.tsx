@@ -1,11 +1,11 @@
 // app/sign-up/[[...sign-up]]/page.tsx
 "use client";
-import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSignUp } from "@clerk/nextjs";
 import SignupForm from "@/components/shared/SignupForm";
 import VerifyForm from "@/components/shared/VerifyForm";
+import { set } from "mongoose";
 
 const Signup = () => {
   const { isLoaded, signUp, setActive } = useSignUp();
@@ -13,6 +13,7 @@ const Signup = () => {
   const router = useRouter();
   const [verifying, setVerifying] = useState(false);
   const [code, setCode] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const signUpWithEmail = async ({
     emailAddress,
@@ -67,6 +68,8 @@ const Signup = () => {
       }
     } catch (err) {
       console.log("Error:", JSON.stringify(err, null, 2));
+      setCode("");
+      setIsSubmitting(false);
     }
   };
 
@@ -75,7 +78,13 @@ const Signup = () => {
       {!verifying ? (
         <SignupForm signUpWithEmail={signUpWithEmail} clerkError={clerkError} />
       ) : (
-        <VerifyForm handleVerify={handleVerify} code={code} setCode={setCode} />
+        <VerifyForm
+          handleVerify={handleVerify}
+          code={code}
+          setCode={setCode}
+          isSubmitting={isSubmitting}
+          setIsSubmitting={setIsSubmitting}
+        />
       )}
     </>
   );
