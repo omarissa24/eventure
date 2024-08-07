@@ -23,6 +23,25 @@ export const organizerHeaderLinks = [
   },
 ];
 
+export const adminHeaderLinks = [
+  {
+    label: "Home",
+    route: "/",
+  },
+  {
+    label: "Events",
+    route: "/events",
+  },
+  {
+    label: "Users",
+    route: "/users",
+  },
+  {
+    label: "My Profile",
+    route: "/profile",
+  },
+];
+
 export const customerHeaderLinks = [
   {
     label: "Home",

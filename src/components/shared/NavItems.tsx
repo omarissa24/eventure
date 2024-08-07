@@ -1,6 +1,10 @@
 "use client";
 
-import { organizerHeaderLinks, customerHeaderLinks } from "../../constants";
+import {
+  organizerHeaderLinks,
+  customerHeaderLinks,
+  adminHeaderLinks,
+} from "../../constants";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
@@ -14,6 +18,8 @@ const NavItems = () => {
   const headerLinks =
     user?.publicMetadata.role === "organizer"
       ? organizerHeaderLinks
+      : user?.publicMetadata.role === "admin"
+      ? adminHeaderLinks
       : customerHeaderLinks;
 
   return (
