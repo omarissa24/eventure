@@ -45,8 +45,8 @@ const VerifyForm = ({
         cancelable: true,
       }) as unknown as FormEvent;
       syntheticEvent.preventDefault();
-      setIsSubmitting(true);
-      handleVerify(syntheticEvent);
+      // setIsSubmitting(true);
+      // handleVerify(syntheticEvent);
     }
   };
 

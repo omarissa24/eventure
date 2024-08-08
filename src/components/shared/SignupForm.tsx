@@ -1,114 +1,176 @@
 // app/components/SignUpForm.tsx
+"use client";
+
 import Link from "next/link";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+
+const SignUpSchema = z.object({
+  emailAddress: z.string().email("Invalid email address"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
+  role: z.enum(["organizer", "customer"], {
+    required_error: "You need to select a role.",
+  }),
+});
 
 interface SignUpFormProps {
-  signUpWithEmail: ({
-    emailAddress,
-    password,
-    firstName,
-    lastName,
-    role,
-  }: {
-    emailAddress: string;
-    password: string;
-    firstName: string;
-    lastName: string;
-    role: string;
-  }) => void;
+  signUpWithEmail: (data: z.infer<typeof SignUpSchema>) => void;
   clerkError: string;
 }
 
-const SignupForm = ({ signUpWithEmail, clerkError }: SignUpFormProps) => {
+const SignUpForm = ({ signUpWithEmail, clerkError }: SignUpFormProps) => {
+  const form = useForm<z.infer<typeof SignUpSchema>>({
+    resolver: zodResolver(SignUpSchema),
+  });
+
+  function onSubmit(data: z.infer<typeof SignUpSchema>) {
+    signUpWithEmail(data);
+    console.log(data);
+  }
+
   return (
     <div className='justify-center mt-12 grid justify-items-center md:mt-20'>
-      <div className='h-auto rounded-xl md:rounded-3xl w-80 md:w-96'>
+      <div className='h-auto rounded-xl md:rounded-3xl w-80 md:w-96 bg-white shadow-lg'>
         <div className='p-6 md:p-8'>
-          <h1 className='mb-6 text-3xl font-light text-black'>Sign Up</h1>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              const target = e.target as typeof e.target & {
-                email: { value: string };
-                password: { value: string };
-                firstName: { value: string };
-                lastName: { value: string };
-                role: { value: string };
-              };
-              const email = target.email.value;
-              const password = target.password.value;
-              signUpWithEmail({
-                emailAddress: email,
-                password: password,
-                firstName: target.firstName.value,
-                lastName: target.lastName.value,
-                role: target.role.value,
-              });
-            }}
-          >
-            <div className='flex justify-between'>
-              <label className='text-sm font-light text-black'>
-                Organizer
-                <input
-                  name='role'
-                  type='radio'
-                  value='organizer'
-                  className='ml-2'
-                  required
-                />
-              </label>
-              <label className='text-sm font-light text-black'>
-                Customer
-                <input
-                  name='role'
-                  type='radio'
-                  value='customer'
-                  className='ml-2'
-                  required
-                />
-              </label>
-            </div>
-            <input
-              name='firstName'
-              className='block w-full pb-4 pl-4 mb-3 text-sm font-light bg-transparent border-0 border-b-2 h-37 border-slate-600 text-white caret-slate-700 focus:border-white'
-              placeholder='First name'
-              type='text'
-              required
-            />
+          <h1 className='mb-8 text-3xl font-light text-black'>
+            Sign Up to Eventure
+          </h1>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6'>
+              <FormField
+                control={form.control}
+                name='role'
+                render={({ field }) => (
+                  <FormItem className='space-y-3'>
+                    {/* <FormLabel className='text-gray-800'>Role</FormLabel> */}
 
-            <input
-              name='lastName'
-              className='block w-full pb-4 pl-4 mb-3 text-sm font-light bg-transparent border-0 border-b-2 h-37 border-slate-600 text-white caret-slate-700 focus:border-white'
-              placeholder='Last name'
-              type='text'
-              required
-            />
+                    <FormControl>
+                      <RadioGroup
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        className='flex space-x-6 justify-center'
+                      >
+                        <FormItem className='flex items-end space-x-3'>
+                          <FormControl>
+                            <RadioGroupItem value='organizer' />
+                          </FormControl>
+                          <FormLabel className='font-normal'>
+                            Organizer
+                          </FormLabel>
+                        </FormItem>
+                        <FormItem className='flex items-end space-x-3'>
+                          <FormControl>
+                            <RadioGroupItem value='customer' />
+                          </FormControl>
+                          <FormLabel className='font-normal'>
+                            Customer
+                          </FormLabel>
+                        </FormItem>
+                      </RadioGroup>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <input
-              name='email'
-              className='block w-full pb-4 pl-4 mb-3 text-sm font-light bg-transparent border-0 border-b-2 h-37 border-slate-600 text-white caret-slate-700 focus:border-white'
-              placeholder='Email address'
-              type='email'
-              required
-            />
-            <input
-              name='password'
-              className='block w-full pb-4 pl-4 mb-3 text-sm font-light bg-transparent border-0 border-b-2 h-37 border-slate-600 text-black caret-slate-700 focus:border-white'
-              placeholder='Password'
-              type='password'
-              required
-            />
-            <h2 className='text-red mb-8'>
-              {clerkError && <p>{clerkError}</p>}
-            </h2>
-            <button
-              className='w-full h-12 mb-6 text-sm font-light text-white hover:text-blue-900 hover:bg-white bg-slate-700 rounded-md'
-              type='submit'
-            >
-              Create an account
-            </button>
-          </form>
-          <p className='text-sm font-light text-center text-black'>
-            Already have an acccount?
+              <FormField
+                control={form.control}
+                name='firstName'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input
+                        placeholder='First name'
+                        {...field}
+                        className='input-field'
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name='lastName'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input
+                        placeholder='Last name'
+                        {...field}
+                        className='input-field'
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name='emailAddress'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input
+                        placeholder='Email address'
+                        type='email'
+                        {...field}
+                        className='input-field'
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name='password'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input
+                        placeholder='Password'
+                        type='password'
+                        {...field}
+                        className='input-field'
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {clerkError && (
+                <h2 className='text-red-500 mb-8'>
+                  <p>{clerkError}</p>
+                </h2>
+              )}
+
+              <Button type='submit' className='w-full'>
+                Create an account
+              </Button>
+            </form>
+          </Form>
+
+          <p className='text-sm font-light text-center text-black mt-4'>
+            Already have an account?
             <Link className='ml-2 text-black-200' href='/sign-in'>
               Login
             </Link>
@@ -119,4 +181,4 @@ const SignupForm = ({ signUpWithEmail, clerkError }: SignUpFormProps) => {
   );
 };
 
-export default SignupForm;
+export default SignUpForm;
