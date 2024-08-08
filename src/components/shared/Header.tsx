@@ -10,13 +10,16 @@ const Header = () => {
   return (
     <header className='w-full border-b'>
       <div className='wrapper flex items-center justify-between'>
-        <Link href='/' className='w-36'>
+        <Link href='/' className='w-36 relative'>
           <Image
             src='/assets/images/logo.svg'
             width={128}
             height={38}
             alt='Eventure logo'
           />
+          <p className='top-[1px] left-[40px] absolute font-semibold text-xl'>
+            Eventure
+          </p>
         </Link>
 
         <SignedIn>
