@@ -6,11 +6,15 @@ import { SearchParamProps } from "@/types";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
+import { auth } from "@clerk/nextjs/server";
 
 export default async function Home({ searchParams }: SearchParamProps) {
   const page = Number(searchParams?.page) || 1;
   const searchText = (searchParams?.query as string) || "";
   const category = (searchParams?.category as string) || "";
+  const { sessionClaims } = auth();
+
+  const role = sessionClaims?.metadata.role as string;
 
   const events = await getUpcomingEvents({
     query: searchText,
@@ -32,9 +36,20 @@ export default async function Home({ searchParams }: SearchParamProps) {
               conferences to concerts, and everything in between, we&apos;ve got
               you covered.
             </p>
-            <Button size='lg' asChild className='button w-full sm:w-fit'>
-              <Link href='#events'>Explore Now</Link>
-            </Button>
+            <div className='flex flex-col gap-4 sm:flex-row md:gap-8'>
+              <Button size='lg' asChild className='button w-full sm:w-fit'>
+                <Link href='#events'>Explore Now</Link>
+              </Button>
+              {role === "organizer" && (
+                <Button
+                  size='lg'
+                  asChild
+                  className='button w-full sm:w-fit bg-orange-400'
+                >
+                  <Link href='/tasks'>View Tasks</Link>
+                </Button>
+              )}
+            </div>
           </div>
           <Image
             src='/assets/images/hero.png'

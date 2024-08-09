@@ -8,6 +8,11 @@ import { taskColumns } from "@/components/shared/columns";
 const Tasks = async () => {
   const { sessionClaims } = auth();
   const userId = sessionClaims?.metadata.userId as string;
+  const role = sessionClaims?.metadata.role as string;
+
+  if (role !== "organizer") {
+    return <h1>You are not authorized to view this page</h1>;
+  }
 
   const tasks = await getTasksForUser({ userId });
 
