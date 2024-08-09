@@ -1,6 +1,5 @@
 import { getTasksForUser } from "@/lib/actions/task.actions";
 import { auth } from "@clerk/nextjs/server";
-import { Task } from "@/types";
 import TaskFormDialog from "@/components/shared/TaskFormDialog";
 import { TaskDataTable } from "@/components/shared/TaskDataTable";
 import { taskColumns } from "@/components/shared/columns";
