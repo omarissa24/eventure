@@ -9,6 +9,7 @@ import Event from "@/lib/database/models/event.model";
 import { handleError } from "@/lib/utils";
 
 import { CreateUserParams, UpdateUserParams } from "@/types/index";
+import { clerkClient } from "@clerk/nextjs/server";
 
 export async function createUser(user: CreateUserParams) {
   try {
@@ -89,6 +90,7 @@ export async function deleteUser(clerkId: string) {
 
     // Delete user
     const deletedUser = await User.findByIdAndDelete(userToDelete._id);
+    await clerkClient.users.deleteUser(userToDelete.clerkId);
     revalidatePath("/");
 
     return deletedUser ? JSON.parse(JSON.stringify(deletedUser)) : null;
