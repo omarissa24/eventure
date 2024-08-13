@@ -56,3 +56,14 @@
 | **Before**             | **After**                 |
 |-------------------------------|-------------------------------------|
 |                               | `name` (required, unique)           |
+
+
+#### Order Schema (New)
+
+| **Before**             | **After**                 |
+|-------------------------------|-------------------------------------|
+|                               | `createdAt` (Date, default: Date.now) |
+|                               | `stripeId` (String, required, unique) |
+|                               | `totalAmount` (String)               |
+|                               | `event` (reference to `Event` model) |
+|                               | `buyer` (reference to `User` model)  |
