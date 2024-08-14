@@ -1,0 +1,104 @@
+# `getOrdersByEvent`
+
+This documentation covers the `getOrdersByEvent` function, which is responsible for retrieving orders associated with a specific event from the database in the application.
+
+## Function: `getOrdersByEvent`
+
+### Description
+
+The `getOrdersByEvent` function is an asynchronous function that retrieves order records from the MongoDB database based on the provided event ID and search string. It performs necessary lookups to join user and event information and filters orders based on the search string.
+
+### Parameters
+
+- `GetOrdersByEventParams`: An object containing the following properties:
+  - `eventId` (string): The ID of the event whose orders are to be retrieved.
+  - `searchString` (string): A search string to filter the orders.
+
+### Return Value
+
+- Returns a JSON stringified array of order records associated with the specified event if successful.
+- Throws an error if there is any issue during the retrieval process.
+
+### Example Usage
+
+```javascript
+export async function getOrdersByEvent({
+  searchString,
+  eventId,
+}: GetOrdersByEventParams) {
+  try {
+    await connectToDatabase();
+
+    if (!eventId) throw new Error("Event ID is required");
+    const eventObjectId = new ObjectId(eventId);
+
+    const orders = await Order.aggregate([
+      {
+        $lookup: {
+          from: "users",
+          localField: "buyer",
+          foreignField: "_id",
+          as: "buyer",
+        },
+      },
+      {
+        $unwind: "$buyer",
+      },
+      {
+        $lookup: {
+          from: "events",
+          localField: "event",
+          foreignField: "_id",
+          as: "event",
+        },
+      },
+      {
+        $unwind: "$event",
+      },
+      {
+        $project: {
+          _id: 1,
+          totalAmount: 1,
+          createdAt: 1,
+          eventTitle: "$event.title",
+          eventId: "$event._id",
+          buyer: {
+            $concat: ["$buyer.firstName", " ", "$buyer.lastName"],
+          },
+        },
+      },
+      {
+        $match: {
+          $and: [
+            { eventId: eventObjectId },
+            { buyer: { $regex: RegExp(searchString, "i") } },
+          ],
+        },
+      },
+    ]);
+
+    return JSON.parse(JSON.stringify(orders));
+  } catch (error) {
+    handleError(error);
+  }
+}
+```
+
+### Error Handling
+
+- The function uses a try-catch block to handle errors.
+- If the `eventId` is not provided, it throws an "Event ID is required" error.
+- Any other errors encountered during the retrieval process are passed to the `handleError` function for handling.
+
+### Dependencies
+
+- `connectToDatabase`: A function to connect to the MongoDB database.
+- `Order`: A MongoDB model representing the order.
+- `ObjectId`: A function to convert the event ID to an ObjectId.
+- `handleError`: A function to handle errors.
+
+### Notes
+
+- Ensure that the `eventId` and `searchString` parameters are correctly validated before calling this function.
+- This function assumes that the necessary MongoDB model (`Order`) and utility functions (`connectToDatabase`, `ObjectId`, `handleError`) are properly defined and imported in your application.
+- The function performs aggregation to join user and event information and filters orders based on the search string.

@@ -1,0 +1,59 @@
+# `createOrder`
+
+This documentation covers the `createOrder` function, which is responsible for creating new order records in the database in the application.
+
+## Function: `createOrder`
+
+### Description
+
+The `createOrder` function is an asynchronous function that creates a new order record in the MongoDB database. It validates the provided order details and creates the order.
+
+### Parameters
+
+- `CreateOrderParams`: An object containing the following properties:
+  - `stripeId` (string): The ID of the Stripe payment.
+  - `eventId` (string): The ID of the event associated with the order.
+  - `buyerId` (string): The ID of the buyer.
+  - `totalAmount` (string): The total amount of the order.
+  - `createdAt` (Date): The creation date of the order.
+
+### Return Value
+
+- Returns a JSON stringified version of the newly created order if successful.
+- Throws an error if there is any issue during the creation process.
+
+### Example Usage
+
+```javascript
+export const createOrder = async (order: CreateOrderParams) => {
+  try {
+    await connectToDatabase();
+
+    const newOrder = await Order.create({
+      ...order,
+      event: order.eventId,
+      buyer: order.buyerId,
+    });
+
+    return JSON.parse(JSON.stringify(newOrder));
+  } catch (error) {
+    handleError(error);
+  }
+};
+```
+
+### Error Handling
+
+- The function uses a try-catch block to handle errors.
+- Any errors encountered during the creation process are passed to the `handleError` function for handling.
+
+### Dependencies
+
+- `connectToDatabase`: A function to connect to the MongoDB database.
+- `Order`: A MongoDB model representing the order.
+- `handleError`: A function to handle errors.
+
+### Notes
+
+- Ensure that the `order` parameters are correctly validated before calling this function.
+- This function assumes that the necessary MongoDB model (`Order`) and utility functions (`connectToDatabase`, `handleError`) are properly defined and imported in your application.

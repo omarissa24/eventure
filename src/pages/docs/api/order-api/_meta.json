@@ -1,0 +1,6 @@
+{
+  "checkout-order-api": "Checkout Order",
+  "create-order-api": "Create Order",
+  "get-orders-by-event-api": "Get Orders by Event",
+  "get-orders-by-user-api": "Get Orders by User"
+}

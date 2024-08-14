@@ -1,0 +1,82 @@
+# `getOrdersByUser`
+
+This documentation covers the `getOrdersByUser` function, which is responsible for retrieving orders associated with a specific user from the database in the application.
+
+## Function: `getOrdersByUser`
+
+### Description
+
+The `getOrdersByUser` function is an asynchronous function that retrieves order records from the MongoDB database where the specified user is the buyer. It supports pagination and populates event and organizer information for each order.
+
+### Parameters
+
+- `GetOrdersByUserParams`: An object containing the following properties:
+  - `userId` (string | null): The ID of the user whose orders are to be retrieved.
+  - `limit` (number): The number of orders to retrieve per page (default is 3).
+  - `page` (string | number | null): The page number for pagination.
+
+### Return Value
+
+- Returns an object containing:
+  - `data`: A JSON stringified array of order records associated with the specified user.
+  - `totalPages`: The total number of pages based on the orders count and the specified limit.
+- Throws an error if there is any issue during the retrieval process.
+
+### Example Usage
+
+```javascript
+export async function getOrdersByUser({
+  userId,
+  limit = 3,
+  page,
+}: GetOrdersByUserParams) {
+  try {
+    await connectToDatabase();
+
+    const skipAmount = (Number(page) - 1) * limit;
+    const conditions = { buyer: userId };
+
+    const orders = await Order.find(conditions)
+      .sort({ createdAt: "desc" })
+      .skip(skipAmount)
+      .limit(limit)
+      .populate({
+        path: "event",
+        model: Event,
+        populate: {
+          path: "organizer",
+          model: User,
+          select: "_id firstName lastName",
+        },
+      });
+
+    const ordersCount = await Order.countDocuments(conditions);
+
+    return {
+      data: JSON.parse(JSON.stringify(orders)),
+      totalPages: Math.ceil(ordersCount / limit),
+    };
+  } catch (error) {
+    handleError(error);
+  }
+}
+```
+
+### Error Handling
+
+- The function uses a try-catch block to handle errors.
+- Any errors encountered during the retrieval process are passed to the `handleError` function for handling.
+
+### Dependencies
+
+- `connectToDatabase`: A function to connect to the MongoDB database.
+- `Order`: A MongoDB model representing the order.
+- `Event`: A MongoDB model representing the event.
+- `User`: A MongoDB model representing the user.
+- `handleError`: A function to handle errors.
+
+### Notes
+
+- Ensure that the `userId`, `limit`, and `page` parameters are correctly validated before calling this function.
+- This function assumes that the necessary MongoDB models (`Order`, `Event`, `User`) and utility functions (`connectToDatabase`, `handleError`) are properly defined and imported in your application.
+- The function populates event and organizer information for each order, supporting nested population of related models.

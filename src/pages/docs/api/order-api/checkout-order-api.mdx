@@ -1,0 +1,282 @@
+# `checkoutOrder`
+
+This documentation covers the `checkoutOrder` function, which is responsible for creating a Stripe checkout session for an order in the application.
+
+## Function: `checkoutOrder`
+
+### Description
+
+The `checkoutOrder` function is an asynchronous function that creates a Stripe checkout session for a specified order. It handles both free and paid events.
+
+### Parameters
+
+- `CheckoutOrderParams`: An object containing the following properties:
+  - `eventTitle` (string): The title of the event.
+  - `eventId` (string): The ID of the event.
+  - `price` (string): The price of the event.
+  - `isFree` (boolean): Indicates if the event is free.
+  - `buyerId` (string): The ID of the buyer.
+
+### Example Usage
+
+```javascript
+export const checkoutOrder = async (order: CheckoutOrderParams) => {
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+
+  const price = order.isFree ? 0 : Number(order.price) * 100;
+
+  try {
+    const session = await stripe.checkout.sessions.create({
+      line_items: [
+        {
+          price_data: {
+            currency: "usd",
+            unit_amount: price,
+            product_data: {
+              name: order.eventTitle,
+            },
+          },
+          quantity: 1,
+        },
+      ],
+      metadata: {
+        eventId: order.eventId,
+        buyerId: order.buyerId,
+      },
+      mode: "payment",
+      success_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/profile`,
+      cancel_url: `${process.env.NEXT_PUBLIC_SERVER_URL}/`,
+    });
+
+    redirect(session.url!);
+  } catch (error) {
+    throw error;
+  }
+};
+```
+
+### Error Handling
+
+- The function uses a try-catch block to handle errors.
+- Any errors encountered during the checkout session creation process are thrown and must be handled by the calling code.
+
+### Dependencies
+
+- `Stripe`: The Stripe library for creating a checkout session.
+- `redirect`: A function to redirect the user to the Stripe checkout session URL.
+
+### Notes
+
+- Ensure that the `order` parameters are correctly validated before calling this function.
+- This function assumes that the necessary environment variables (`STRIPE_SECRET_KEY` and `NEXT_PUBLIC_SERVER_URL`) are properly set in your application.
+
+---
+
+# `createOrder` Server Action Documentation
+
+This documentation covers the `createOrder` function, which is responsible for creating a new order record in the database in a Next.js application.
+
+## Function: `createOrder`
+
+### Description
+
+The `createOrder` function is an asynchronous function that creates a new order record in the MongoDB database. It validates the provided order details and creates the order.
+
+### Parameters
+
+- `CreateOrderParams`: An object containing the following properties:
+  - `stripeId` (string): The ID of the Stripe payment.
+  - `eventId` (string): The ID of the event associated with the order.
+  - `buyerId` (string): The ID of the buyer.
+  - `totalAmount` (string): The total amount of the order.
+  - `createdAt` (Date): The creation date of the order.
+
+### Return Value
+
+- Returns a JSON stringified version of the newly created order if successful.
+- Throws an error if there is any issue during the creation process.
+
+### Example Usage
+
+```javascript
+export const createOrder = async ({
+  stripeId,
+  eventId,
+  buyerId,
+  totalAmount,
+  createdAt,
+}: CreateOrderParams) => {
+  try {
+    await connectToDatabase();
+
+    const newOrder = await Order.create({
+      stripeId,
+      eventId,
+      buyerId,
+      totalAmount,
+      createdAt,
+    });
+
+    return JSON.parse(JSON.stringify(newOrder));
+  } catch (error) {
+    handleError(error);
+  }
+};
+```
+
+### Error Handling
+
+- The function uses a try-catch block to handle errors.
+- Any errors encountered during the creation process are passed to the `handleError` function for handling.
+
+### Dependencies
+
+- `connectToDatabase`: A function to connect to the MongoDB database.
+- `Order`: A MongoDB model representing the order.
+- `handleError`: A function to handle errors.
+
+### Notes
+
+- Ensure that the `order` parameters are correctly validated before calling this function.
+- This function assumes that the necessary MongoDB model (`Order`) and utility functions (`connectToDatabase`, `handleError`) are properly defined and imported in your application.
+
+---
+
+# `getOrdersByEvent` Server Action Documentation
+
+This documentation covers the `getOrdersByEvent` function, which is responsible for retrieving orders associated with a specific event from the database in a Next.js application.
+
+## Function: `getOrdersByEvent`
+
+### Description
+
+The `getOrdersByEvent` function is an asynchronous function that retrieves order records from the MongoDB database based on the provided event ID and search string.
+
+### Parameters
+
+- `GetOrdersByEventParams`: An object containing the following properties:
+  - `eventId` (string): The ID of the event whose orders are to be retrieved.
+  - `searchString` (string): A search string to filter the orders.
+
+### Return Value
+
+- Returns a JSON stringified array of order records associated with the specified event if successful.
+- Throws an error if there is any issue during the retrieval process.
+
+### Example Usage
+
+```javascript
+export const getOrdersByEvent = async ({
+  eventId,
+  searchString,
+}: GetOrdersByEventParams) => {
+  try {
+    await connectToDatabase();
+
+    const conditions = {
+      event: eventId,
+      $or: [
+        { stripeId: { $regex: searchString, $options: "i" } },
+        { totalAmount: { $regex: searchString, $options: "i" } },
+      ],
+    };
+
+    const orders = await Order.find(conditions)
+      .populate("buyer")
+      .populate("event");
+
+    return JSON.parse(JSON.stringify(orders));
+  } catch (error) {
+    handleError(error);
+  }
+};
+```
+
+### Error Handling
+
+- The function uses a try-catch block to handle errors.
+- Any errors encountered during the retrieval process are passed to the `handleError` function for handling.
+
+### Dependencies
+
+- `connectToDatabase`: A function to connect to the MongoDB database.
+- `Order`: A MongoDB model representing the order.
+- `handleError`: A function to handle errors.
+
+### Notes
+
+- Ensure that the `eventId` and `searchString` parameters are correctly validated before calling this function.
+- This function assumes that the necessary MongoDB model (`Order`) and utility functions (`connectToDatabase`, `handleError`) are properly defined and imported in your application.
+
+---
+
+# `getOrdersByUser` Server Action Documentation
+
+This documentation covers the `getOrdersByUser` function, which is responsible for retrieving orders associated with a specific user from the database in a Next.js application.
+
+## Function: `getOrdersByUser`
+
+### Description
+
+The `getOrdersByUser` function is an asynchronous function that retrieves order records from the MongoDB database where the specified user is the buyer. It supports pagination.
+
+### Parameters
+
+- `GetOrdersByUserParams`: An object containing the following properties:
+  - `userId` (string | null): The ID of the user whose orders are to be retrieved.
+  - `limit` (number): The number of orders to retrieve per page (optional).
+  - `page` (string | number | null): The page number for pagination (optional).
+
+### Return Value
+
+- Returns a JSON stringified array of order records associated with the specified user if successful.
+- Throws an error if there is any issue during the retrieval process.
+
+### Example Usage
+
+```javascript
+export const getOrdersByUser = async ({
+  userId,
+  limit = 10,
+  page = 1,
+}: GetOrdersByUserParams) => {
+  try {
+    await connectToDatabase();
+
+    const skipAmount = (Number(page) - 1) * limit;
+
+    const conditions = { buyer: userId };
+    const ordersQuery = Order.find(conditions)
+      .skip(skipAmount)
+      .limit(limit)
+      .populate("event")
+      .populate("buyer");
+    const orders = await ordersQuery;
+
+    const ordersCount = await Order.countDocuments(conditions);
+
+    return {
+      data: JSON.parse(JSON.stringify(orders)),
+      totalPages: Math.ceil(ordersCount / limit),
+    };
+  } catch (error) {
+    handleError(error);
+  }
+};
+```
+
+### Error Handling
+
+- The function uses a try-catch block to handle errors.
+- Any errors encountered during the retrieval process are passed to the `handleError` function for handling.
+
+### Dependencies
+
+- `connectToDatabase`: A function to connect to the MongoDB database.
+- `Order`: A MongoDB model representing the order.
+- `handleError`: A function to handle errors.
+
+### Notes
+
+- Ensure that the `userId`, `limit`, and `page` parameters are correctly validated before calling this function.
+- This function assumes that the necessary MongoDB model (`Order`) and utility functions (`connectToDatabase`, `handleError`) are properly defined and imported in your application.
