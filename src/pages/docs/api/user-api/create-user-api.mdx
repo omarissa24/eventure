@@ -1,0 +1,40 @@
+# Create User
+
+## `createUser`
+
+### Description
+
+Creates a new user in the database.
+
+### Parameters
+
+- `user` (CreateUserParams): An object containing the details of the user to be created.
+  - `clerkId` (string): Unique identifier for the user in the Clerk system.
+  - `firstName` (string): First name of the user.
+  - `lastName` (string): Last name of the user.
+  - `email` (string): Email address of the user.
+  - `photo` (string): URL of the user's photo.
+  - `role` (string): Role of the user (e.g., organizer).
+
+### Returns
+
+- A JSON object representing the newly created user.
+
+### Example
+
+```javascript
+import { createUser } from "path/to/api";
+
+const newUser = {
+  clerkId: "clerk123",
+  firstName: "John",
+  lastName: "Doe",
+  email: "john.doe@example.com",
+  photo: "http://example.com/photo.jpg",
+  role: "organizer",
+};
+
+createUser(newUser)
+  .then((user) => console.log(user))
+  .catch((error) => console.error(error));
+```

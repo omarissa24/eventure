@@ -1,0 +1,27 @@
+# Delete User
+
+## `deleteUser`
+
+### Description
+
+Deletes a user from the database and unlinks related data.
+
+### Parameters
+
+- `clerkId` (string): The Clerk ID of the user to be deleted.
+
+### Returns
+
+- A JSON object representing the deleted user if successful, otherwise throws an error.
+
+### Example
+
+```javascript
+import { deleteUser } from "path/to/api";
+
+const clerkId = "clerk123";
+
+deleteUser(clerkId)
+  .then((user) => console.log(user))
+  .catch((error) => console.error(error));
+```

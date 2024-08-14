@@ -1,0 +1,27 @@
+# Get User By ID
+
+## `getUserById`
+
+### Description
+
+Fetches a user from the database by their ID.
+
+### Parameters
+
+- `userId` (string): The ID of the user to be fetched.
+
+### Returns
+
+- A JSON object representing the user if found, otherwise throws an error.
+
+### Example
+
+```javascript
+import { getUserById } from "path/to/api";
+
+const userId = "60c72b2f9b1e8e1d4c8e4d6b";
+
+getUserById(userId)
+  .then((user) => console.log(user))
+  .catch((error) => console.error(error));
+```

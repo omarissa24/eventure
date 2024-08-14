@@ -1,0 +1,7 @@
+{
+  "user-api": "Users",
+  "event-api": "Events",
+  "task-api": "Tasks",
+  "category-api": "Categories",
+  "order-api": "Orders"
+}

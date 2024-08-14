@@ -1,0 +1,36 @@
+# Update User
+
+## `updateUser`
+
+### Description
+
+Updates an existing user in the database.
+
+### Parameters
+
+- `clerkId` (string): The Clerk ID of the user to be updated.
+- `user` (UpdateUserParams): An object containing the updated details of the user.
+  - `firstName` (string): Updated first name of the user.
+  - `lastName` (string): Updated last name of the user.
+  - `photo` (string): Updated URL of the user's photo.
+
+### Returns
+
+- A JSON object representing the updated user if successful, otherwise throws an error.
+
+### Example
+
+```javascript
+import { updateUser } from "path/to/api";
+
+const clerkId = "clerk123";
+const updatedDetails = {
+  firstName: "Jane",
+  lastName: "Doe",
+  photo: "http://example.com/new-photo.jpg",
+};
+
+updateUser(clerkId, updatedDetails)
+  .then((user) => console.log(user))
+  .catch((error) => console.error(error));
+```
