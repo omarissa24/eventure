@@ -47,7 +47,7 @@ export const DeleteConfirmation = ({ eventId }: { eventId: string }) => {
           <AlertDialogAction
             onClick={() =>
               startTransition(async () => {
-                await deleteEvent({ eventId, path: pathname });
+                await deleteEvent({ eventId, path: pathname! });
               })
             }
           >

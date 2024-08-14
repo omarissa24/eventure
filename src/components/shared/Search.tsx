@@ -21,13 +21,13 @@ const Search = ({
 
       if (query) {
         newUrl = formUrlQuery({
-          params: searchParams.toString(),
+          params: searchParams ? searchParams.toString() : "",
           key: "query",
           value: query,
         });
       } else {
         newUrl = removeKeysFromQuery({
-          params: searchParams.toString(),
+          params: searchParams ? searchParams.toString() : "",
           keysToRemove: ["query"],
         });
       }

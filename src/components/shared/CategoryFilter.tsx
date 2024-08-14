@@ -32,14 +32,16 @@ const CategoryFilter = () => {
     let newUrl = "";
 
     if (category && category !== "All") {
+      const params = searchParams ? searchParams.toString() : "";
       newUrl = formUrlQuery({
-        params: searchParams.toString(),
+        params,
         key: "category",
         value: category,
       });
     } else {
+      const params = searchParams ? searchParams.toString() : "";
       newUrl = removeKeysFromQuery({
-        params: searchParams.toString(),
+        params,
         keysToRemove: ["category"],
       });
     }

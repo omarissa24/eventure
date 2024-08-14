@@ -39,7 +39,7 @@ export const DeleteTaskConfirmation = ({ taskId }: { taskId: string }) => {
           <AlertDialogAction
             onClick={() =>
               startTransition(async () => {
-                await deleteTask({ taskId, path: pathname });
+                await deleteTask({ taskId, path: pathname! });
               })
             }
           >
