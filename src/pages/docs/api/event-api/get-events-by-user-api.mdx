@@ -1,0 +1,81 @@
+# `getEventsByUser`
+
+This documentation covers the `getEventsByUser` function, which is responsible for retrieving a list of event records organized by a specific user from the database in the application.
+
+## Function: `getEventsByUser`
+
+### Description
+
+The `getEventsByUser` function is an asynchronous function that retrieves event records organized by a specific user from the MongoDB database. It supports pagination and sorting.
+
+### Parameters
+
+- `GetEventsByUserParams`: An object containing the following properties:
+  - `userId` (string): The ID of the user (organizer) whose events are to be retrieved.
+  - `limit` (number): The number of events to retrieve per page (default is 6).
+  - `page` (number): The page number for pagination (optional).
+
+### Return Value
+
+- Returns an object containing:
+  - `data`: A JSON stringified array of event records organized by the specified user.
+  - `totalPages`: The total number of pages based on the events count and the specified limit (if pagination is used).
+
+### Example Usage
+
+```javascript
+export async function getEventsByUser({
+  userId,
+  limit = 6,
+  page,
+}: GetEventsByUserParams) {
+  try {
+    await connectToDatabase();
+
+    const conditions = { organizer: userId };
+
+    if (!page) {
+      const events = await populateEvent(
+        Event.find(conditions).sort({ title: "asc" })
+      );
+      return JSON.parse(JSON.stringify(events));
+    }
+
+    const skipAmount = (page - 1) * limit;
+
+    const eventsQuery = Event.find(conditions)
+      .sort({ createdAt: "desc" })
+      .skip(skipAmount)
+      .limit(limit);
+
+    const events = await populateEvent(eventsQuery);
+    const eventsCount = await Event.countDocuments(conditions);
+
+    return {
+      data: JSON.parse(JSON.stringify(events)),
+      totalPages: Math.ceil(eventsCount / limit),
+    };
+  } catch (error) {
+    handleError(error);
+  }
+}
+```
+
+### Error Handling
+
+- The function uses a try-catch block to handle errors.
+- Any errors encountered during the retrieval process are passed to the `handleError` function for handling.
+
+### Dependencies
+
+- `connectToDatabase`: A function to connect to the MongoDB database.
+- `Event`: A MongoDB model representing the event.
+- `populateEvent`: A function to populate the event with necessary details (e.g., references to other collections).
+- `handleError`: A function to handle errors.
+
+### Notes
+
+- Ensure that the `userId` parameter is correctly validated before calling this function.
+- If `page` is not provided, the function retrieves all events organized by the user, sorted by title in ascending order.
+- If `page` is provided, the function supports pagination and retrieves a specified number of events per page, sorted by creation date in descending order.
+- This function assumes that the necessary MongoDB model (`Event`) and utility functions (`connectToDatabase`, `populateEvent`, `handleError`) are properly defined and imported in your application.

@@ -1,0 +1,87 @@
+# `getUpcomingEvents`
+
+This documentation covers the `getUpcomingEvents` function, which is responsible for retrieving a paginated list of upcoming event records from the database in the application.
+
+## Function: `getUpcomingEvents`
+
+### Description
+
+The `getUpcomingEvents` function is an asynchronous function that retrieves a list of upcoming event records from the MongoDB database based on the provided query parameters. It supports pagination, searching by title, and filtering by category, and only includes events with a start date in the future.
+
+### Parameters
+
+- `GetAllEventsParams`: An object containing the following properties:
+  - `query` (string): A search query to filter events by title.
+  - `limit` (number): The number of events to retrieve per page (default is 6).
+  - `page` (number): The page number for pagination.
+  - `category` (string): The name of the category to filter events.
+
+### Return Value
+
+- Returns an object containing:
+  - `data`: A JSON stringified array of upcoming event records that match the query parameters.
+  - `totalPages`: The total number of pages based on the events count and the specified limit.
+
+### Example Usage
+
+```javascript
+export async function getUpcomingEvents({
+  query,
+  limit = 6,
+  page,
+  category,
+}: GetAllEventsParams) {
+  try {
+    await connectToDatabase();
+
+    const titleCondition = query
+      ? { title: { $regex: query, $options: "i" } }
+      : {};
+    const categoryCondition = category
+      ? await getCategoryByName(category)
+      : null;
+
+    const conditions = {
+      $and: [
+        titleCondition,
+        categoryCondition ? { category: categoryCondition._id } : {},
+        { startDateTime: { $gte: new Date() } },
+      ],
+    };
+
+    const skipAmount = (Number(page) - 1) * limit;
+    const eventsQuery = Event.find(conditions)
+      .sort({ startDateTime: "asc" })
+      .skip(skipAmount)
+      .limit(limit);
+
+    const events = await populateEvent(eventsQuery);
+    const eventsCount = await Event.countDocuments(conditions);
+
+    return {
+      data: JSON.parse(JSON.stringify(events)),
+      totalPages: Math.ceil(eventsCount / limit),
+    };
+  } catch (error) {
+    handleError(error);
+  }
+}
+```
+
+### Error Handling
+
+- The function uses a try-catch block to handle errors.
+- Any errors encountered during the retrieval process are passed to the `handleError` function for handling.
+
+### Dependencies
+
+- `connectToDatabase`: A function to connect to the MongoDB database.
+- `Event`: A MongoDB model representing the event.
+- `getCategoryByName`: A function to retrieve a category by its name.
+- `populateEvent`: A function to populate the event with necessary details (e.g., references to other collections).
+- `handleError`: A function to handle errors.
+
+### Notes
+
+- Ensure that the `query`, `limit`, `page`, and `category` parameters are correctly validated before calling this function.
+- This function assumes that the necessary MongoDB model (`Event`) and utility functions (`connectToDatabase`, `getCategoryByName`, `populateEvent`, `handleError`) are properly defined and imported in your application.

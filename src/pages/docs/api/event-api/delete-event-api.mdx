@@ -1,0 +1,52 @@
+# `deleteEvent`
+
+This documentation covers the `deleteEvent` function, which is responsible for deleting an event record from the database in the application.
+
+## Function: `deleteEvent`
+
+### Description
+
+The `deleteEvent` function is an asynchronous function that deletes an existing event record from the MongoDB database. It performs necessary validations to ensure the event exists before deletion and revalidates the specified path upon successful deletion.
+
+### Parameters
+
+- `DeleteEventParams`: An object containing the following properties:
+  - `eventId` (string): The ID of the event to be deleted.
+  - `path` (string): The path to be revalidated after the event is deleted.
+
+### Return Value
+
+- No return value. The function performs the deletion and revalidation silently.
+- Throws an error if there is any issue during the deletion process.
+
+### Example Usage
+
+```javascript
+export async function deleteEvent({ eventId, path }: DeleteEventParams) {
+  try {
+    await connectToDatabase();
+
+    const deletedEvent = await Event.findByIdAndDelete(eventId);
+    if (deletedEvent) revalidatePath(path);
+  } catch (error) {
+    handleError(error);
+  }
+}
+```
+
+### Error Handling
+
+- The function uses a try-catch block to handle errors.
+- Any errors encountered during the deletion process are passed to the `handleError` function for handling.
+
+### Dependencies
+
+- `connectToDatabase`: A function to connect to the MongoDB database.
+- `Event`: A MongoDB model representing the event.
+- `revalidatePath`: A function to revalidate the specified path.
+- `handleError`: A function to handle errors.
+
+### Notes
+
+- Ensure that the `eventId` parameter is correctly validated before calling this function.
+- This function assumes that the necessary MongoDB model (`Event`) and utility functions (`connectToDatabase`, `revalidatePath`, `handleError`) are properly defined and imported in your application.

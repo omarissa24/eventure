@@ -1,0 +1,77 @@
+# `updateEvent`
+
+This documentation covers the `updateEvent` function, which is responsible for updating an existing event record in the database in the application.
+
+## Function: `updateEvent`
+
+### Description
+
+The `updateEvent` function is an asynchronous function that updates an existing event record in the MongoDB database. It validates the user and event details, updates the event, and revalidates the specified path.
+
+### Parameters
+
+- `UpdateEventParams`: An object containing the following properties:
+  - `userId` (string): The ID of the user updating the event.
+  - `event` (object): The event details.
+    - `_id` (string): The ID of the event to be updated.
+    - `title` (string): The title of the event.
+    - `description` (string): The description of the event.
+    - `location` (string): The location of the event.
+    - `imageUrl` (string): The URL of the event's image.
+    - `startDateTime` (Date): The start date and time of the event.
+    - `endDateTime` (Date): The end date and time of the event.
+    - `categoryId` (string): The ID of the category the event belongs to.
+    - `price` (string): The price of the event.
+    - `isFree` (boolean): Indicates if the event is free.
+    - `url` (string): The URL of the event.
+    - `participants` (string[]): A list of user IDs participating in the event.
+  - `path` (string): The path to be revalidated after the event is updated.
+
+### Return Value
+
+- Returns a JSON stringified version of the updated event if successful.
+- Throws an error if the event is not found, the user is unauthorized, or if there is any other issue during the update process.
+
+### Example Usage
+
+```javascript
+export async function updateEvent({ userId, event, path }: UpdateEventParams) {
+  try {
+    await connectToDatabase();
+
+    const eventToUpdate = await Event.findById(event._id);
+    if (!eventToUpdate || eventToUpdate.organizer.toHexString() !== userId) {
+      throw new Error("Unauthorized or event not found");
+    }
+
+    const updatedEvent = await Event.findByIdAndUpdate(
+      event._id,
+      { ...event, category: event.categoryId },
+      { new: true }
+    );
+    revalidatePath(path);
+
+    return JSON.parse(JSON.stringify(updatedEvent));
+  } catch (error) {
+    handleError(error);
+  }
+}
+```
+
+### Error Handling
+
+- The function uses a try-catch block to handle errors.
+- If the event is not found or the user is unauthorized, it throws an "Unauthorized or event not found" error.
+- Any other errors encountered during the update process are passed to the `handleError` function for handling.
+
+### Dependencies
+
+- `connectToDatabase`: A function to connect to the MongoDB database.
+- `Event`: A MongoDB model representing the event.
+- `revalidatePath`: A function to revalidate the specified path.
+- `handleError`: A function to handle errors.
+
+### Notes
+
+- Ensure that the `userId` and `event` parameters are correctly validated before calling this function.
+- This function assumes that the necessary MongoDB model (`Event`) and utility functions (`connectToDatabase`, `revalidatePath`, `handleError`) are properly defined and imported in your application.

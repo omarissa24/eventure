@@ -1,0 +1,75 @@
+# `createEvent`
+
+This documentation covers the `createEvent` function, which is responsible for creating new event records in the application. The function interacts with the MongoDB database to save event details and performs necessary validations.
+
+## Function: `createEvent`
+
+### Description
+
+The `createEvent` function is an asynchronous function that creates a new event record in the database. It validates the user and the provided event details, creates the event, and revalidates the specified path.
+
+### Parameters
+
+- `CreateEventParams`: An object containing the following properties:
+  - `userId` (string): The ID of the user creating the event.
+  - `event` (object): The event details.
+    - `title` (string): The title of the event.
+    - `description` (string): The description of the event.
+    - `location` (string): The location of the event.
+    - `imageUrl` (string): The URL of the event's image.
+    - `startDateTime` (Date): The start date and time of the event.
+    - `endDateTime` (Date): The end date and time of the event.
+    - `categoryId` (string): The ID of the category the event belongs to.
+    - `price` (string): The price of the event.
+    - `isFree` (boolean): Indicates if the event is free.
+    - `url` (string): The URL of the event.
+    - `participants` (string[]): A list of user IDs participating in the event.
+  - `path` (string): The path to be revalidated after the event is created.
+
+### Return Value
+
+- Returns a JSON stringified version of the newly created event if successful.
+- Throws an error if the organizer (user) is not found or if there is any other issue during the creation process.
+
+### Example Usage
+
+```javascript
+export async function createEvent({ userId, event, path }: CreateEventParams) {
+  try {
+    await connectToDatabase();
+
+    const organizer = await User.findById(userId);
+    if (!organizer) throw new Error("Organizer not found");
+
+    const newEvent = await Event.create({
+      ...event,
+      category: event.categoryId,
+      organizer: userId,
+    });
+    revalidatePath(path);
+
+    return JSON.parse(JSON.stringify(newEvent));
+  } catch (error) {
+    handleError(error);
+  }
+}
+```
+
+### Error Handling
+
+- The function uses a try-catch block to handle errors.
+- If the organizer (user) is not found, it throws an "Organizer not found" error.
+- Any other errors encountered during the event creation process are passed to the `handleError` function for handling.
+
+### Dependencies
+
+- `connectToDatabase`: A function to connect to the MongoDB database.
+- `User`: A MongoDB model representing the user.
+- `Event`: A MongoDB model representing the event.
+- `revalidatePath`: A function to revalidate the specified path.
+- `handleError`: A function to handle errors.
+
+### Notes
+
+- Ensure that the `userId` and `event` parameters are correctly validated before calling this function.
+- This function assumes that the necessary MongoDB models (`User` and `Event`) and utility functions (`connectToDatabase`, `revalidatePath`, `handleError`) are properly defined and imported in your application.

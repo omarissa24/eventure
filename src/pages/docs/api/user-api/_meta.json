@@ -1,8 +1,8 @@
 {
   "create-user-api": "Create User",
-  "get-user-api": "Get User",
-  "get-all-users-api": "Get All Users",
-  "update-user-api": "Update User",
   "delete-user-api": "Delete User",
-  "get-organizers-api": "Get Organizers"
+  "get-all-users-api": "Get All Users",
+  "get-organizers-api": "Get Organizers",
+  "get-user-api": "Get User By ID",
+  "update-user-api": "Update User"
 }
