@@ -23,9 +23,7 @@ export default {
         />
         <rect x='56' y='45' width='30' height='30' rx='15' fill='#FA776C' />
       </svg>
-      <span style={{ position: "absolute", left: "55px", fontWeight: 700 }}>
-        Eventure
-      </span>
+      <span style={{ marginLeft: -70, fontWeight: 700 }}>Eventure</span>
     </>
   ),
   project: {
