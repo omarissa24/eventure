@@ -52,7 +52,7 @@ const VerifyForm = ({
 
   return (
     <div className='flex justify-center mt-12 md:mt-20'>
-      <div className='h-auto rounded-xl md:rounded-3xl w-80 md:w-96 bg-white shadow-lg'>
+      <div className='h-auto rounded-xl md:rounded-3xl bg-white shadow-lg'>
         <div className='p-6 md:p-8 flex flex-col gap-8'>
           <h1 className='text-2xl font-semibold text-center text-gray-800 mb-4'>
             Verification Code
@@ -70,7 +70,7 @@ const VerifyForm = ({
                   <InputOTPSlot
                     key={index}
                     index={index}
-                    className='w-12 h-12 border border-gray-300 rounded-md text-center text-lg'
+                    className='w-10 h-10 sm:w-12 sm:h-12 border border-gray-300 rounded-md text-center text-lg'
                   />
                 ))}
               </InputOTPGroup>
@@ -80,7 +80,7 @@ const VerifyForm = ({
                   <InputOTPSlot
                     key={index + 3}
                     index={index + 3}
-                    className='w-12 h-12 border border-gray-300 rounded-md text-center text-lg'
+                    className='w-10 h-10 sm:w-12 sm:h-12 border border-gray-300 rounded-md text-center text-lg'
                   />
                 ))}
               </InputOTPGroup>
