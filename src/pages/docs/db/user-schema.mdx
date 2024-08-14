@@ -1,0 +1,41 @@
+# User Schema Documentation
+
+This document provides a detailed description of the `User` schema used in our application. The schema is defined using Mongoose, a MongoDB object modeling tool designed to work in an asynchronous environment.
+
+## User Schema
+
+The `UserSchema` defines the structure and constraints of the User documents stored in the MongoDB collection.
+
+```typescript
+import { Schema, model, models } from "mongoose";
+
+const UserSchema = new Schema({
+  clerkId: { type: String, required: true, unique: true },
+  email: { type: String, required: true, unique: true },
+  firstName: { type: String, required: true },
+  lastName: { type: String, required: true },
+  photo: { type: String, required: true },
+  role: { type: String, required: true },
+});
+```
+
+## User Model
+
+The `User` model is created using the `UserSchema`. It is either retrieved from the existing models or created if it does not exist.
+
+```typescript
+const User = models.User || model("User", UserSchema);
+
+export default User;
+```
+
+### Field Descriptions
+
+- **clerkId**: A unique identifier for the user provided by the authentication service (required, unique).
+- **email**: The user's email address (required, unique).
+- **firstName**: The user's first name (required).
+- **lastName**: The user's last name (required).
+- **photo**: The URL of the user's profile photo (required).
+- **role**: The user's role within the application (required).
+
+This schema ensures that all necessary fields are validated and appropriately constrained, providing a robust structure for storing user-related data in the database.

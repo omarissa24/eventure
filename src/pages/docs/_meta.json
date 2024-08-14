@@ -1,6 +1,8 @@
 {
   "getting-started": "Getting Started",
   "components": "Components",
+  "api": "API",
+  "db": "Database",
   "github_link": {
     "title": "GitHub",
     "href": "https://github.com/omarissa24/eventure",

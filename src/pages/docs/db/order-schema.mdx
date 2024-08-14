@@ -1,0 +1,92 @@
+# Order Schema Documentation
+
+This document provides a detailed description of the `Order` schema used in our application. The schema is defined using Mongoose, a MongoDB object modeling tool designed to work in an asynchronous environment.
+
+## Order Interface
+
+The `IOrder` interface extends the Mongoose `Document` and defines the structure of an Order object.
+
+```typescript
+import { Document } from "mongoose";
+
+export interface IOrder extends Document {
+  createdAt: Date;
+  stripeId: string;
+  totalAmount: string;
+  event: {
+    _id: string;
+    title: string;
+  };
+  buyer: {
+    _id: string;
+    firstName: string;
+    lastName: string;
+  };
+}
+```
+
+## Order Item Type
+
+The `IOrderItem` type defines the structure of an order item object.
+
+```typescript
+export type IOrderItem = {
+  _id: string;
+  totalAmount: string;
+  createdAt: Date;
+  eventTitle: string;
+  eventId: string;
+  buyer: string;
+};
+```
+
+## Order Schema
+
+The `OrderSchema` defines the structure and constraints of the Order documents stored in the MongoDB collection.
+
+```typescript
+import { Schema, model, models } from "mongoose";
+
+const OrderSchema = new Schema({
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  stripeId: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  totalAmount: {
+    type: String,
+  },
+  event: {
+    type: Schema.Types.ObjectId,
+    ref: "Event",
+  },
+  buyer: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+  },
+});
+```
+
+## Order Model
+
+The `Order` model is created using the `OrderSchema`. It is either retrieved from the existing models or created if it does not exist.
+
+```typescript
+const Order = models.Order || model("Order", OrderSchema);
+
+export default Order;
+```
+
+### Field Descriptions
+
+- **createdAt**: The date and time when the order was created (default: current date and time).
+- **stripeId**: The unique identifier for the order from Stripe (required, unique).
+- **totalAmount**: The total amount for the order.
+- **event**: The event associated with the order, referencing the `Event` model.
+- **buyer**: The buyer of the order, referencing the `User` model.
+
+This schema ensures that all necessary fields are validated and appropriately referenced, providing a robust structure for storing order-related data in the database.

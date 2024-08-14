@@ -1,0 +1,7 @@
+{
+  "user-schema": "User",
+  "event-schema": "Event",
+  "task-schema": "Task",
+  "category-schema": "Category",
+  "order-schema": "Order"
+}
