@@ -1,0 +1,6 @@
+{
+  "checkout-order": "Checkout Order",
+  "create-order": "Create Order",
+  "get-orders-by-event": "Get Orders by Event",
+  "get-orders-by-user": "Get Orders by User"
+}

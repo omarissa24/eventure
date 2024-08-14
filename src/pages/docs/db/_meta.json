@@ -1,7 +1,7 @@
 {
-  "user-schema": "User",
-  "event-schema": "Event",
-  "task-schema": "Task",
-  "category-schema": "Category",
-  "order-schema": "Order"
+  "user": "User",
+  "event": "Event",
+  "task": "Task",
+  "category": "Category",
+  "order": "Order"
 }

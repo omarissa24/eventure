@@ -1,0 +1,10 @@
+{
+  "create-event": "Create Event",
+  "delete-event": "Delete Event",
+  "get-all-events": "Get All Events",
+  "get-event": "Get Event By ID",
+  "get-events-by-user": "Get Events By User",
+  "get-related-events": "Get Related Events",
+  "get-upcoming-events": "Get Upcoming Events",
+  "update-event": "Update Event"
+}

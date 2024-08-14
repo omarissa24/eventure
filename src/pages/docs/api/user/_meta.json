@@ -1,0 +1,8 @@
+{
+  "create-user": "Create User",
+  "delete-user": "Delete User",
+  "get-all-users": "Get All Users",
+  "get-organizers": "Get Organizers",
+  "get-user": "Get User By ID",
+  "update-user": "Update User"
+}

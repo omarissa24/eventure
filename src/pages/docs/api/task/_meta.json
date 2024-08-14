@@ -1,0 +1,7 @@
+{
+  "create-task": "Create Task",
+  "delete-task": "Delete Task",
+  "get-tasks-for-event": "Get Tasks For Event",
+  "get-tasks-for-user": "Get Tasks For User",
+  "update-task": "Update Task"
+}

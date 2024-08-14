@@ -1,8 +1,0 @@
-{
-  "create-user-api": "Create User",
-  "delete-user-api": "Delete User",
-  "get-all-users-api": "Get All Users",
-  "get-organizers-api": "Get Organizers",
-  "get-user-api": "Get User By ID",
-  "update-user-api": "Update User"
-}
