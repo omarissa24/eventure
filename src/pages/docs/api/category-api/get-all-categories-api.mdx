@@ -1,0 +1,49 @@
+# `getAllCategories`
+
+This documentation covers the `getAllCategories` function, which is responsible for retrieving all category records from the database in the application.
+
+## Function: `getAllCategories`
+
+### Description
+
+The `getAllCategories` function is an asynchronous function that retrieves all category records from the MongoDB database.
+
+### Parameters
+
+- None
+
+### Return Value
+
+- Returns a JSON stringified array of all category records if successful.
+- Throws an error if there is any issue during the retrieval process.
+
+### Example Usage
+
+```javascript
+export const getAllCategories = async () => {
+  try {
+    await connectToDatabase();
+
+    const categories = await Category.find();
+
+    return JSON.parse(JSON.stringify(categories));
+  } catch (error) {
+    handleError(error);
+  }
+};
+```
+
+### Error Handling
+
+- The function uses a try-catch block to handle errors.
+- Any errors encountered during the retrieval process are passed to the `handleError` function for handling.
+
+### Dependencies
+
+- `connectToDatabase`: A function to connect to the MongoDB database.
+- `Category`: A MongoDB model representing the category.
+- `handleError`: A function to handle errors.
+
+### Notes
+
+- This function assumes that the necessary MongoDB model (`Category`) and utility functions (`connectToDatabase`, `handleError`) are properly defined and imported in your application.

@@ -1,0 +1,53 @@
+# `createCategory`
+
+This documentation covers the `createCategory` function, which is responsible for creating new category records in the database in the application.
+
+## Function: `createCategory`
+
+### Description
+
+The `createCategory` function is an asynchronous function that creates a new category record in the MongoDB database. It validates the provided category name and creates the category.
+
+### Parameters
+
+- `CreateCategoryParams`: An object containing the following property:
+  - `categoryName` (string): The name of the category to be created.
+
+### Return Value
+
+- Returns a JSON stringified version of the newly created category if successful.
+- Throws an error if there is any issue during the creation process.
+
+### Example Usage
+
+```javascript
+export const createCategory = async ({
+  categoryName,
+}: CreateCategoryParams) => {
+  try {
+    await connectToDatabase();
+
+    const newCategory = await Category.create({ name: categoryName });
+
+    return JSON.parse(JSON.stringify(newCategory));
+  } catch (error) {
+    handleError(error);
+  }
+};
+```
+
+### Error Handling
+
+- The function uses a try-catch block to handle errors.
+- Any errors encountered during the creation process are passed to the `handleError` function for handling.
+
+### Dependencies
+
+- `connectToDatabase`: A function to connect to the MongoDB database.
+- `Category`: A MongoDB model representing the category.
+- `handleError`: A function to handle errors.
+
+### Notes
+
+- Ensure that the `categoryName` parameter is correctly validated before calling this function.
+- This function assumes that the necessary MongoDB model (`Category`) and utility functions (`connectToDatabase`, `handleError`) are properly defined and imported in your application.
