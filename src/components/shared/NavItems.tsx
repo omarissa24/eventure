@@ -10,7 +10,7 @@ import React from "react";
 import { useUser } from "@clerk/nextjs";
 
 interface NavItemsProps {
-  onNavItemClick: () => void;
+  onNavItemClick?: () => void;
 }
 
 const NavItems = ({ onNavItemClick }: NavItemsProps) => {
