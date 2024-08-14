@@ -1,5 +1,4 @@
 "use client";
-
 import {
   organizerHeaderLinks,
   customerHeaderLinks,
@@ -10,7 +9,11 @@ import { usePathname } from "next/navigation";
 import React from "react";
 import { useUser } from "@clerk/nextjs";
 
-const NavItems = () => {
+interface NavItemsProps {
+  onNavItemClick: () => void;
+}
+
+const NavItems = ({ onNavItemClick }: NavItemsProps) => {
   const pathname = usePathname();
 
   const { user } = useUser();
@@ -34,7 +37,9 @@ const NavItems = () => {
               isActive && "text-primary-500"
             } flex-center p-medium-16 whitespace-nowrap`}
           >
-            <Link href={link.route}>{link.label}</Link>
+            <Link href={link.route} onClick={onNavItemClick}>
+              {link.label}
+            </Link>
           </li>
         );
       })}

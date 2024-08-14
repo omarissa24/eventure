@@ -1,3 +1,5 @@
+"use client";
+import { useState } from "react";
 import {
   Sheet,
   SheetContent,
@@ -11,10 +13,19 @@ import { Separator } from "../ui/separator";
 import NavItems from "./NavItems";
 
 const MobileNav = () => {
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
+
+  const handleNavItemClick = () => {
+    setIsSheetOpen(false);
+  };
+
   return (
     <nav className='md:hidden'>
-      <Sheet>
-        <SheetTrigger className='align-middle'>
+      <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+        <SheetTrigger
+          className='align-middle'
+          onClick={() => setIsSheetOpen(true)}
+        >
           <Image
             src='/assets/icons/menu.svg'
             alt='menu'
@@ -31,7 +42,7 @@ const MobileNav = () => {
             height={38}
           />
           <Separator className='border border-gray-50' />
-          <NavItems />
+          <NavItems onNavItemClick={handleNavItemClick} />
         </SheetContent>
       </Sheet>
     </nav>
