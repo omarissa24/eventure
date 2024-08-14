@@ -1,40 +1,55 @@
-# Create User
+# `createUser`
 
-## `createUser`
+This documentation covers the `createUser` function, which is responsible for creating new user records in the database in the application.
+
+## Function: `createUser`
 
 ### Description
 
-Creates a new user in the database.
+The `createUser` function is an asynchronous function that creates a new user record in the MongoDB database. It validates the provided user details and creates the user.
 
 ### Parameters
 
-- `user` (CreateUserParams): An object containing the details of the user to be created.
-  - `clerkId` (string): Unique identifier for the user in the Clerk system.
-  - `firstName` (string): First name of the user.
-  - `lastName` (string): Last name of the user.
-  - `email` (string): Email address of the user.
-  - `photo` (string): URL of the user's photo.
-  - `role` (string): Role of the user (e.g., organizer).
+- `CreateUserParams`: An object containing the following properties:
+  - `clerkId` (string): The ID of the user from the Clerk service.
+  - `firstName` (string): The first name of the user.
+  - `lastName` (string): The last name of the user.
+  - `email` (string): The email address of the user.
+  - `photo` (string): The URL of the user's photo.
+  - `role` (string): The role of the user.
 
-### Returns
+### Return Value
 
-- A JSON object representing the newly created user.
+- Returns a JSON stringified version of the newly created user if successful.
+- Throws an error if there is any issue during the creation process.
 
-### Example
+### Example Usage
 
 ```javascript
-import { createUser } from "path/to/api";
+export async function createUser(user: CreateUserParams) {
+  try {
+    await connectToDatabase();
 
-const newUser = {
-  clerkId: "clerk123",
-  firstName: "John",
-  lastName: "Doe",
-  email: "john.doe@example.com",
-  photo: "http://example.com/photo.jpg",
-  role: "organizer",
-};
-
-createUser(newUser)
-  .then((user) => console.log(user))
-  .catch((error) => console.error(error));
+    const newUser = await User.create(user);
+    return JSON.parse(JSON.stringify(newUser));
+  } catch (error) {
+    handleError(error);
+  }
+}
 ```
+
+### Error Handling
+
+- The function uses a try-catch block to handle errors.
+- Any errors encountered during the creation process are passed to the `handleError` function for handling.
+
+### Dependencies
+
+- `connectToDatabase`: A function to connect to the MongoDB database.
+- `User`: A MongoDB model representing the user.
+- `handleError`: A function to handle errors.
+
+### Notes
+
+- Ensure that the `user` parameters are correctly validated before calling this function.
+- This function assumes that the necessary MongoDB model (`User`) and utility functions (`connectToDatabase`, `handleError`) are properly defined and imported in your application.

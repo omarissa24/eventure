@@ -1,36 +1,54 @@
-# Update User
+# `updateUser`
 
-## `updateUser`
+This documentation covers the `updateUser` function, which is responsible for updating existing user records in the database in the application.
+
+## Function: `updateUser`
 
 ### Description
 
-Updates an existing user in the database.
+The `updateUser` function is an asynchronous function that updates an existing user record in the MongoDB database. It validates the provided user details and updates the user.
 
 ### Parameters
 
-- `clerkId` (string): The Clerk ID of the user to be updated.
-- `user` (UpdateUserParams): An object containing the updated details of the user.
-  - `firstName` (string): Updated first name of the user.
-  - `lastName` (string): Updated last name of the user.
-  - `photo` (string): Updated URL of the user's photo.
+- `UpdateUserParams`: An object containing the following properties:
+  - `firstName` (string): The first name of the user.
+  - `lastName` (string): The last name of the user.
+  - `photo` (string): The URL of the user's photo.
 
-### Returns
+### Return Value
 
-- A JSON object representing the updated user if successful, otherwise throws an error.
+- Returns a JSON stringified version of the updated user if successful.
+- Throws an error if there is any issue during the update process.
 
-### Example
+### Example Usage
 
 ```javascript
-import { updateUser } from "path/to/api";
+export async function updateUser(userId: string, user: UpdateUserParams) {
+  try {
+    await connectToDatabase();
 
-const clerkId = "clerk123";
-const updatedDetails = {
-  firstName: "Jane",
-  lastName: "Doe",
-  photo: "http://example.com/new-photo.jpg",
-};
-
-updateUser(clerkId, updatedDetails)
-  .then((user) => console.log(user))
-  .catch((error) => console.error(error));
+    const updatedUser = await User.findByIdAndUpdate(userId, user, {
+      new: true,
+    });
+    return JSON.parse(JSON.stringify(updatedUser));
+  } catch (error) {
+    handleError(error);
+  }
+}
 ```
+
+### Error Handling
+
+- The function uses a try-catch block to handle errors.
+- Any errors encountered during the update process are passed to the `handleError` function for handling.
+
+### Dependencies
+
+- `connectToDatabase`: A function to connect to the MongoDB database.
+- `User`: A MongoDB model representing the user.
+- `handleError`: A function to handle errors.
+
+### Notes
+
+- Ensure that the `user` parameters are correctly validated before calling this function.
+- This function assumes that the necessary MongoDB model (`User`) and utility functions (`connectToDatabase`, `handleError`) are properly defined and imported in your application.

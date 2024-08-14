@@ -1,27 +1,51 @@
-# Get User By ID
+# `getUserById`
 
-## `getUserById`
+This documentation covers the `getUserById` function, which is responsible for retrieving a user record by ID from the database in the application.
+
+## Function: `getUserById`
 
 ### Description
 
-Fetches a user from the database by their ID.
+The `getUserById` function is an asynchronous function that retrieves a user record from the MongoDB database based on the provided user ID.
 
 ### Parameters
 
-- `userId` (string): The ID of the user to be fetched.
+- `userId` (string): The ID of the user to be retrieved.
 
-### Returns
+### Return Value
 
-- A JSON object representing the user if found, otherwise throws an error.
+- Returns a JSON stringified version of the user record if found.
+- Throws an error if the user is not found or if there is any issue during the retrieval process.
 
-### Example
+### Example Usage
 
 ```javascript
-import { getUserById } from "path/to/api";
+export async function getUserById(userId: string) {
+  try {
+    await connectToDatabase();
 
-const userId = "60c72b2f9b1e8e1d4c8e4d6b";
-
-getUserById(userId)
-  .then((user) => console.log(user))
-  .catch((error) => console.error(error));
+    const user = await User.findById(userId);
+    if (!user) throw new Error("User not found");
+    return JSON.parse(JSON.stringify(user));
+  } catch (error) {
+    handleError(error);
+  }
+}
 ```
+
+### Error Handling
+
+- The function uses a try-catch block to handle errors.
+- If the user is not found, it throws a "User not found" error.
+- Any other errors encountered during the retrieval process are passed to the `handleError` function for handling.
+
+### Dependencies
+
+- `connectToDatabase`: A function to connect to the MongoDB database.
+- `User`: A MongoDB model representing the user.
+- `handleError`: A function to handle errors.
+
+### Notes
+
+- Ensure that the `userId` parameter is correctly validated before calling this function.
+- This function assumes that the necessary MongoDB model (`User`) and utility functions (`connectToDatabase`, `handleError`) are properly defined and imported in your application.

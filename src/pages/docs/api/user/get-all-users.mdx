@@ -1,25 +1,49 @@
-# Get All users
+# `getAllUsers`
 
-## `getAllUsers`
+This documentation covers the `getAllUsers` function, which is responsible for retrieving all user records from the database in the application.
+
+## Function: `getAllUsers`
 
 ### Description
 
-Fetches all users from the database.
+The `getAllUsers` function is an asynchronous function that retrieves all user records from the MongoDB database.
 
 ### Parameters
 
-None.
+- None
 
-### Returns
+### Return Value
 
-- A JSON array of all users in the database.
+- Returns a JSON stringified array of all user records if successful.
+- Throws an error if there is any issue during the retrieval process.
 
-### Example
+### Example Usage
 
 ```javascript
-import { getAllUsers } from "path/to/api";
+export async function getAllUsers() {
+  try {
+    await connectToDatabase();
 
-getAllUsers()
-  .then((users) => console.log(users))
-  .catch((error) => console.error(error));
+    const users = await User.find();
+
+    return JSON.parse(JSON.stringify(users));
+  } catch (error) {
+    handleError(error);
+  }
+}
 ```
+
+### Error Handling
+
+- The function uses a try-catch block to handle errors.
+- Any errors encountered during the retrieval process are passed to the `handleError` function for handling.
+
+### Dependencies
+
+- `connectToDatabase`: A function to connect to the MongoDB database.
+- `User`: A MongoDB model representing the user.
+- `handleError`: A function to handle errors.
+
+### Notes
+
+- This function assumes that the necessary MongoDB model (`User`) and utility functions (`connectToDatabase`, `handleError`) are properly defined and imported in your application.

@@ -1,27 +1,51 @@
-# Delete User
+# `deleteUser`
 
-## `deleteUser`
+This documentation covers the `deleteUser` function, which is responsible for deleting a user record from the database in the application.
+
+## Function: `deleteUser`
 
 ### Description
 
-Deletes a user from the database and unlinks related data.
+The `deleteUser` function is an asynchronous function that deletes an existing user record from the MongoDB database. It validates the user ID and deletes the user.
 
 ### Parameters
 
-- `clerkId` (string): The Clerk ID of the user to be deleted.
+- `userId` (string): The ID of the user to be deleted.
 
-### Returns
+### Return Value
 
-- A JSON object representing the deleted user if successful, otherwise throws an error.
+- Returns a JSON stringified version of the deleted user if successful.
+- Throws an error if the user is not found or if there is any issue during the deletion process.
 
-### Example
+### Example Usage
 
 ```javascript
-import { deleteUser } from "path/to/api";
+export async function deleteUser(userId: string) {
+  try {
+    await connectToDatabase();
 
-const clerkId = "clerk123";
-
-deleteUser(clerkId)
-  .then((user) => console.log(user))
-  .catch((error) => console.error(error));
+    const deletedUser = await User.findByIdAndDelete(userId);
+    if (!deletedUser) throw new Error("User not found");
+    return JSON.parse(JSON.stringify(deletedUser));
+  } catch (error) {
+    handleError(error);
+  }
+}
 ```
+
+### Error Handling
+
+- The function uses a try-catch block to handle errors.
+- If the user is not found, it throws a "User not found" error.
+- Any other errors encountered during the deletion process are passed to the `handleError` function for handling.
+
+### Dependencies
+
+- `connectToDatabase`: A function to connect to the MongoDB database.
+- `User`: A MongoDB model representing the user.
+- `handleError`: A function to handle errors.
+
+### Notes
+
+- Ensure that the `userId` parameter is correctly validated before calling this function.
+- This function assumes that the necessary MongoDB model (`User`) and utility functions (`connectToDatabase`, `handleError`) are properly defined and imported in your application.
