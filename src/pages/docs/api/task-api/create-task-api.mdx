@@ -1,0 +1,61 @@
+# `createTask`
+
+This documentation covers the `createTask` function, which is responsible for creating new task records in the database in the application.
+
+## Function: `createTask`
+
+### Description
+
+The `createTask` function is an asynchronous function that creates a new task record in the MongoDB database. It validates the provided task details, creates the task, and revalidates the specified path.
+
+### Parameters
+
+- `CreateTaskParams`: An object containing the following properties:
+  - `task` (object): The task details.
+    - `event` (string): The ID of the event associated with the task.
+    - `creator` (string): The ID of the user creating the task.
+    - `title` (string): The title of the task.
+    - `description` (string): The description of the task.
+    - `status` (string): The status of the task.
+    - `deadline` (Date): The deadline of the task.
+    - `assignee` (string): The ID of the user assigned to the task.
+  - `path` (string): The path to be revalidated after the task is created.
+
+### Return Value
+
+- Returns a JSON stringified version of the newly created task if successful.
+- Throws an error if there is any issue during the creation process.
+
+### Example Usage
+
+```javascript
+export async function createTask({ task, path }: CreateTaskParams) {
+  try {
+    await connectToDatabase();
+
+    const newTask = await Task.create(task);
+    revalidatePath(path);
+
+    return JSON.parse(JSON.stringify(newTask));
+  } catch (error) {
+    handleError(error);
+  }
+}
+```
+
+### Error Handling
+
+- The function uses a try-catch block to handle errors.
+- Any errors encountered during the creation process are passed to the `handleError` function for handling.
+
+### Dependencies
+
+- `connectToDatabase`: A function to connect to the MongoDB database.
+- `Task`: A MongoDB model representing the task.
+- `revalidatePath`: A function to revalidate the specified path.
+- `handleError`: A function to handle errors.
+
+### Notes
+
+- Ensure that the `task` parameters are correctly validated before calling this function.
+- This function assumes that the necessary MongoDB model (`Task`) and utility functions (`connectToDatabase`, `revalidatePath`, `handleError`) are properly defined and imported in your application.

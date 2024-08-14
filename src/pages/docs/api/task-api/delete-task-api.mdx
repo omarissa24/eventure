@@ -1,0 +1,56 @@
+# `deleteTask`
+
+This documentation covers the `deleteTask` function, which is responsible for deleting a task record from the database in the application.
+
+## Function: `deleteTask`
+
+### Description
+
+The `deleteTask` function is an asynchronous function that deletes an existing task record from the MongoDB database. It validates the task ID, deletes the task, and revalidates the specified path.
+
+### Parameters
+
+- `DeleteTaskParams`: An object containing the following properties:
+  - `taskId` (string): The ID of the task to be deleted.
+  - `path` (string): The path to be revalidated after the task is deleted.
+
+### Return Value
+
+- Returns a JSON stringified version of the deleted task if successful.
+- Throws an error if the task is not found or if there is any issue during the deletion process.
+
+### Example Usage
+
+```javascript
+export async function deleteTask({ taskId, path }: DeleteTaskParams) {
+  try {
+    await connectToDatabase();
+
+    const deletedTask = await Task.findByIdAndDelete(taskId);
+    if (!deletedTask) throw new Error("Task not found");
+    revalidatePath(path);
+
+    return JSON.parse(JSON.stringify(deletedTask));
+  } catch (error) {
+    handleError(error);
+  }
+}
+```
+
+### Error Handling
+
+- The function uses a try-catch block to handle errors.
+- If the task is not found, it throws a "Task not found" error.
+- Any other errors encountered during the deletion process are passed to the `handleError` function for handling.
+
+### Dependencies
+
+- `connectToDatabase`: A function to connect to the MongoDB database.
+- `Task`: A MongoDB model representing the task.
+- `revalidatePath`: A function to revalidate the specified path.
+- `handleError`: A function to handle errors.
+
+### Notes
+
+- Ensure that the `taskId` parameter is correctly validated before calling this function.
+- This function assumes that the necessary MongoDB model (`Task`) and utility functions (`connectToDatabase`, `revalidatePath`, `handleError`) are properly defined and imported in your application.

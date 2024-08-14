@@ -1,0 +1,62 @@
+# `updateTask`
+
+This documentation covers the `updateTask` function, which is responsible for updating an existing task record in the database in the application.
+
+## Function: `updateTask`
+
+### Description
+
+The `updateTask` function is an asynchronous function that updates an existing task record in the MongoDB database. It validates the provided task details, updates the task, and revalidates the specified path.
+
+### Parameters
+
+- `UpdateTaskParams`: An object containing the following properties:
+  - `task` (object): The task details.
+    - `_id` (string): The ID of the task to be updated.
+    - `title` (string): The title of the task.
+    - `description` (string): The description of the task.
+    - `status` (string): The status of the task.
+    - `deadline` (Date): The deadline of the task.
+    - `assignee` (string): The ID of the user assigned to the task.
+  - `path` (string): The path to be revalidated after the task is updated.
+
+### Return Value
+
+- Returns a JSON stringified version of the updated task if successful.
+- Throws an error if there is any issue during the update process.
+
+### Example Usage
+
+```javascript
+export async function updateTask({ task, path }: UpdateTaskParams) {
+  try {
+    await connectToDatabase();
+
+    const updatedTask = await Task.findByIdAndUpdate(task._id, task, {
+      new: true,
+    });
+    revalidatePath(path);
+
+    return JSON.parse(JSON.stringify(updatedTask));
+  } catch (error) {
+    handleError(error);
+  }
+}
+```
+
+### Error Handling
+
+- The function uses a try-catch block to handle errors.
+- Any errors encountered during the update process are passed to the `handleError` function for handling.
+
+### Dependencies
+
+- `connectToDatabase`: A function to connect to the MongoDB database.
+- `Task`: A MongoDB model representing the task.
+- `revalidatePath`: A function to revalidate the specified path.
+- `handleError`: A function to handle errors.
+
+### Notes
+
+- Ensure that the `task` parameters are correctly validated before calling this function.
+- This function assumes that the necessary MongoDB model (`Task`) and utility functions (`connectToDatabase`, `revalidatePath`, `handleError`) are properly defined and imported in your application.

@@ -1,0 +1,54 @@
+# `getTasksForUser`
+
+This documentation covers the `getTasksForUser` function, which is responsible for retrieving tasks associated with a specific user from the database in the application.
+
+## Function: `getTasksForUser`
+
+### Description
+
+The `getTasksForUser` function is an asynchronous function that retrieves task records from the MongoDB database where the specified user is either the creator or the assignee of the task.
+
+### Parameters
+
+- `GetTasksForUserParams`: An object containing the following property:
+  - `userId` (string): The ID of the user whose tasks are to be retrieved.
+
+### Return Value
+
+- Returns a JSON stringified array of task records associated with the specified user if successful.
+- Throws an error if there is any issue during the retrieval process.
+
+### Example Usage
+
+```javascript
+export async function getTasksForUser({ userId }: GetTasksForUserParams) {
+  try {
+    await connectToDatabase();
+
+    const tasks = await populateTask(
+      Task.find({ $or: [{ creator: userId }, { assignee: userId }] })
+    );
+
+    return JSON.parse(JSON.stringify(tasks));
+  } catch (error) {
+    handleError(error);
+  }
+}
+```
+
+### Error Handling
+
+- The function uses a try-catch block to handle errors.
+- Any errors encountered during the retrieval process are passed to the `handleError` function for handling.
+
+### Dependencies
+
+- `connectToDatabase`: A function to connect to the MongoDB database.
+- `Task`: A MongoDB model representing the task.
+- `populateTask`: A function to populate the task with necessary details (e.g., references to other collections).
+- `handleError`: A function to handle errors.
+
+### Notes
+
+- Ensure that the `userId` parameter is correctly validated before calling this function.
+- This function assumes that the necessary MongoDB model (`Task`) and utility functions (`connectToDatabase`, `populateTask`, `handleError`) are properly defined and imported in your application.

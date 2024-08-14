@@ -1,0 +1,58 @@
+# `getTasksForEvent`
+
+This documentation covers the `getTasksForEvent` function, which is responsible for retrieving tasks associated with a specific event and assigned to a specific user from the database in the application.
+
+## Function: `getTasksForEvent`
+
+### Description
+
+The `getTasksForEvent` function is an asynchronous function that retrieves task records from the MongoDB database where the specified event ID and user ID match the event and assignee of the task, respectively.
+
+### Parameters
+
+- `GetTasksForEventForAssignedUserParams`: An object containing the following properties:
+  - `eventId` (string): The ID of the event whose tasks are to be retrieved.
+  - `userId` (string): The ID of the user assigned to the tasks.
+
+### Return Value
+
+- Returns a JSON stringified array of task records associated with the specified event and assigned to the specified user if successful.
+- Throws an error if there is any issue during the retrieval process.
+
+### Example Usage
+
+```javascript
+export async function getTasksForEvent({
+  eventId,
+  userId,
+}: GetTasksForEventForAssignedUserParams) {
+  try {
+    await connectToDatabase();
+
+    const tasks = await populateTask(
+      Task.find({ event: eventId, assignee: userId })
+    );
+
+    return JSON.parse(JSON.stringify(tasks));
+  } catch (error) {
+    handleError(error);
+  }
+}
+```
+
+### Error Handling
+
+- The function uses a try-catch block to handle errors.
+- Any errors encountered during the retrieval process are passed to the `handleError` function for handling.
+
+### Dependencies
+
+- `connectToDatabase`: A function to connect to the MongoDB database.
+- `Task`: A MongoDB model representing the task.
+- `populateTask`: A function to populate the task with necessary details (e.g., references to other collections).
+- `handleError`: A function to handle errors.
+
+### Notes
+
+- Ensure that the `eventId` and `userId` parameters are correctly validated before calling this function.
+- This function assumes that the necessary MongoDB model (`Task`) and utility functions (`connectToDatabase`, `populateTask`, `handleError`) are properly defined and imported in your application.
